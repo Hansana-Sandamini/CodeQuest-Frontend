@@ -2,51 +2,97 @@ import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { loginUserAction } from "../features/auth/authActions"
 import type { AppDispatch } from "../store/store"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import Button from "../components/Button"
+import { handleAuthAction } from "../utils/swal"
 
 const Login = () => {
-	const dispatch = useDispatch<AppDispatch>()
-	const navigate = useNavigate()
+    const dispatch = useDispatch<AppDispatch>()
+    const navigate = useNavigate()
 
-	const [email, setEmail] = useState("")
-	const [password, setPassword] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
-	const submitHandler = async (e: React.FormEvent) => {
-		e.preventDefault()
-		const res = await dispatch(loginUserAction({ email, password }))
+    const submitHandler = async (e: React.FormEvent) => {
+        e.preventDefault()
 
-		if (loginUserAction.fulfilled.match(res)) {
-			navigate("/profile")
-		}
-	}
+        await handleAuthAction(
+            () => dispatch(loginUserAction({ email: email.trim(), password })),
+            {
+                loadingText: "Signing you in...",
+                successTitle: "Welcome back!",
+                successText: "You've successfully logged in",
+                navigateTo: "/profile",
+                navigate,
+            }
+        )
+    }
 
-	return (
-		<div className="max-w-md mx-auto mt-20 bg-white p-6 rounded shadow">
-			<h1 className="text-2xl font-bold mb-4">Login</h1>
+    return (
+        <div className="min-h-screen bg-linear-to-br from-gray-900 to-black flex items-center justify-center p-4">
+            <div className="w-full max-w-md">
+                <div className="bg-gray-800/30 backdrop-blur-sm rounded-3xl border border-gray-700 shadow-2xl p-8">
 
-			<form onSubmit={submitHandler} className="flex flex-col gap-3">
-				<input
-					type="email"
-					placeholder="Email"
-					className="border p-2 rounded"
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
-				/>
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <div className="w-16 h-16 bg-linear-to-r from-green-500 to-blue-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                            <span className="text-2xl">🔐</span>
+                        </div>
+                        <h1 className="text-3xl font-bold bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                            Welcome Back
+                        </h1>
+                        <p className="text-gray-400 mt-2">Sign in to continue your journey</p>
+                    </div>
 
-				<input
-					type="password"
-					placeholder="Password"
-					className="border p-2 rounded"
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
-				/>
+                    {/* Form */}
+                    <form onSubmit={submitHandler} className="space-y-6">
 
-				<button className="bg-blue-600 text-white py-2 rounded mt-2 hover:bg-blue-700">
-					Login
-				</button>
-			</form>
-		</div>
-	)
+                        <div>
+                            <input
+                                type="email"
+                                placeholder="Enter your email"
+                                className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                autoFocus
+                            />
+                        </div>
+
+                        <div>
+                            <input
+                                type="password"
+                                placeholder="Enter your password"
+                                className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <Button type="submit" className="w-full">
+                            Sign In
+                        </Button>
+
+                    </form>
+
+                    {/* Footer Link */}
+                    <div className="mt-8 text-center">
+                        <p className="text-gray-400">
+                            Don't have an account?{" "}
+                            <Link
+                                to="/register"
+                                className="text-green-400 hover:text-green-300 font-semibold transition"
+                            >
+                                Create Account
+                            </Link>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default Login

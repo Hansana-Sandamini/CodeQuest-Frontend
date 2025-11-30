@@ -1,9 +1,26 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import Navbar from "./components/Navbar"
+
+import Home from "./pages/Home"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
+
 export default function App() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <h1 className="text-4xl font-bold text-blue-600">
-        CodeQuest Frontend Initialized 🚀
-      </h1>
-    </div>
-  )
+    return (
+        <Router>
+            <div className="min-h-screen bg-gray-100">
+                <Navbar />
+
+                <Routes>
+                    {/* Public routes */}
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+
+                    {/* Fallback */}
+                    <Route path="*" element={<h1 className="text-center mt-20 text-2xl">404 - Page Not Found</h1>} />
+                </Routes>
+            </div>
+        </Router>
+    )
 }
