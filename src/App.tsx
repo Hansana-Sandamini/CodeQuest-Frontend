@@ -9,6 +9,8 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import UserDashboard from "./pages/UserDashboard"
 import AdminDashboard from "./pages/AdminDashboard"
+import { useAuth } from "./hooks/useAuth"
+import Sidebar from "./components/Sidebar"
 
 export default function App() {
     return (
@@ -18,6 +20,9 @@ export default function App() {
             <div className="min-h-screen bg-gray-900 text-white">
                 <Navbar />
 
+                {/* Show Sidebar only when logged in */}
+                {useAuth().isAuthenticated && <Sidebar />}
+                
                 <Routes>
                     {/* Public routes */}
                     <Route path="/" element={<Home />} />
