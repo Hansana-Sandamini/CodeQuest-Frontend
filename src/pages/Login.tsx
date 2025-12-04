@@ -5,10 +5,13 @@ import type { AppDispatch } from "../store/store"
 import { Link, useNavigate } from "react-router-dom"
 import Button from "../components/Button"
 import { handleAuthAction } from "../utils/swal"
+import RoleBasedRedirect from "../components/RoleBasedRedirect"
+import { useAuth } from "../hooks/useAuth"
 
 const Login = () => {
     const dispatch = useDispatch<AppDispatch>()
     const navigate = useNavigate()
+    const { isAuthenticated } = useAuth()
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -22,7 +25,7 @@ const Login = () => {
                 loadingText: "Signing you in...",
                 successTitle: "Welcome back!",
                 successText: "You've successfully logged in",
-                navigateTo: "/profile",
+                navigateTo: "",
                 navigate,
             }
         )
@@ -30,6 +33,9 @@ const Login = () => {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-gray-900 to-black flex items-center justify-center p-4">
+
+            {isAuthenticated && <RoleBasedRedirect />}
+
             <div className="w-full max-w-md">
                 <div className="bg-gray-800/30 backdrop-blur-sm rounded-3xl border border-gray-700 shadow-2xl p-8">
 
