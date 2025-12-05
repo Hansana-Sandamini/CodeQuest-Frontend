@@ -3,6 +3,14 @@ import { useAuth } from "../hooks/useAuth"
 import { useDispatch } from "react-redux"
 import { logout } from "../features/auth/authSlice"
 
+// Helper function to scroll smoothly
+const scrollToSection = (sectionId: string) => {
+  const element = document.getElementById(sectionId)
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+}
+
 const Navbar = () => {
     const { isAuthenticated, user } = useAuth()
     const dispatch = useDispatch()
@@ -19,6 +27,28 @@ const Navbar = () => {
                         CodeQuest
                     </span>
                 </Link>
+
+                {/* Middle: Navigation Links - Always Visible */}
+                <div className="hidden md:flex items-center gap-8">
+                    <button
+                        onClick={() => scrollToSection("home")}
+                        className="font-medium hover:text-green-400 transition"
+                    >
+                        Home
+                    </button>
+                    <button
+                        onClick={() => scrollToSection("about")}
+                        className="font-medium hover:text-green-400 transition"
+                    >
+                        About
+                    </button>
+                    <button
+                        onClick={() => scrollToSection("contact")}
+                        className="font-medium hover:text-green-400 transition"
+                    >
+                        Contact
+                    </button>
+                </div>
 
                 {/* Right Side */}
                 <div className="flex items-center gap-6">

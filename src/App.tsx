@@ -4,7 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import AdminRoute from "./components/AdminRoute"
 import RoleBasedRedirect from "./components/RoleBasedRedirect"
 
-import Home from "./pages/Home"
+import Home from "./pages/home/Home"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import UserDashboard from "./pages/UserDashboard"
@@ -25,7 +25,7 @@ export default function App() {
                 
                 <Routes>
                     {/* Public routes */}
-                    <Route path="/" element={<Home />} />
+                    <Route path="/" element={<Home />} /> 
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
 
