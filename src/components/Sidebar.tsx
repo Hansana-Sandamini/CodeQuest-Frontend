@@ -14,7 +14,7 @@ const Sidebar = () => {
     const menuItems = isAdmin
         ? [
               { path: "/admin", label: "Dashboard", icon: <Home size={20} /> },
-              { path: "/languages", label: "Languages", icon: <Globe size={20} /> },
+              { path: "/admin/languages", label: "Languages", icon: <Globe size={20} /> },
               { path: "/leaderboard", label: "Leaderboard", icon: <Trophy size={20} /> },
               { path: "/admin/users", label: "Users", icon: <Users size={20} /> },
               { path: "/profile", label: "Profile", icon: <User size={20} /> },

@@ -8,11 +8,14 @@ import Home from "./pages/home/Home"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import UserDashboard from "./pages/UserDashboard"
-import AdminDashboard from "./pages/AdminDashboard"
+import AdminDashboard from "./pages/admin/AdminDashboard"
 import { useAuth } from "./hooks/useAuth"
 import Sidebar from "./components/Sidebar"
+import AdminLanguages from "./pages/admin/AdminLanguages"
 
 export default function App() {
+    const { isAuthenticated } = useAuth()
+
     return (
         <Router>
             <RoleBasedRedirect />  
@@ -21,7 +24,7 @@ export default function App() {
                 <Navbar />
 
                 {/* Show Sidebar only when logged in */}
-                {useAuth().isAuthenticated && <Sidebar />}
+                {isAuthenticated && <Sidebar />}
                 
                 <Routes>
                     {/* Public routes */}
@@ -29,10 +32,14 @@ export default function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
 
+                    {/* Protected Routes (any logged-in user) */}
                     <Route element={<ProtectedRoute />}>
                         <Route path="/dashboard" element={<UserDashboard />} />
+                        
+                        {/* Admin-Only Routes nested inside ProtectedRoute */}
                         <Route element={<AdminRoute />}>
                             <Route path="/admin" element={<AdminDashboard />} />
+                            <Route path="/admin/languages" element={<AdminLanguages />} />
                         </Route>
                     </Route>
 
