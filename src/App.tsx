@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard"
 import { useAuth } from "./hooks/useAuth"
 import Sidebar from "./components/Sidebar"
 import AdminLanguages from "./pages/admin/AdminLanguages"
+import Languages from "./pages/Languages"
 
 export default function App() {
     const { isAuthenticated } = useAuth()
@@ -35,6 +36,7 @@ export default function App() {
                     {/* Protected Routes (any logged-in user) */}
                     <Route element={<ProtectedRoute />}>
                         <Route path="/dashboard" element={<UserDashboard />} />
+                        <Route path="/languages" element={<Languages />} />
                         
                         {/* Admin-Only Routes nested inside ProtectedRoute */}
                         <Route element={<AdminRoute />}>

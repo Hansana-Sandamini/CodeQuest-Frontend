@@ -3,22 +3,16 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 
 const RoleBasedRedirect = () => {
-    const { isAuthenticated, user } = useAuth()
+    const { isAuthenticated, isAdmin } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
 
     useEffect(() => {
-        if (!isAuthenticated || !user) return
-
-        const roles = (user.roles || []).map((r: any) => String(r).toLowerCase())
-        const isAdmin = roles.includes("admin") || roles.includes("administrator")
-
-        // Prevent redirect loop
-        if (isAdmin && location.pathname.startsWith("/admin")) return
-        if (!isAdmin && location.pathname.startsWith("/dashboard")) return
-
-        navigate(isAdmin ? "/admin" : "/dashboard", { replace: true })
-    }, [isAuthenticated, user, navigate, location])
+        // Redirect only when user is on login page (after logging in)
+        if (location.pathname === "/login" && isAuthenticated) {
+            navigate(isAdmin ? "/admin" : "/dashboard", { replace: true })
+        }
+    }, [isAuthenticated, isAdmin, location.pathname, navigate])
 
     return null
 }
