@@ -7,13 +7,14 @@ import RoleBasedRedirect from "./components/RoleBasedRedirect"
 import Home from "./pages/home/Home"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
-import UserDashboard from "./pages/UserDashboard"
+import UserDashboard from "./pages/user/UserDashboard"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import { useAuth } from "./hooks/useAuth"
 import Sidebar from "./components/Sidebar"
 import AdminLanguages from "./pages/admin/AdminLanguages"
-import Languages from "./pages/Languages"
+import Languages from "./pages/user/Languages"
 import QuestionsByLanguage from "./pages/admin/QuestionsByLanguage"
+import LanguageQuestions from "./pages/user/LanguageQuestions"
 
 export default function App() {
     const { isAuthenticated } = useAuth()
@@ -38,6 +39,7 @@ export default function App() {
                     <Route element={<ProtectedRoute />}>
                         <Route path="/dashboard" element={<UserDashboard />} />
                         <Route path="/languages" element={<Languages />} />
+                        <Route path="/languages/:languageId" element={<LanguageQuestions />} />
                         
                         {/* Admin-Only Routes nested inside ProtectedRoute */}
                         <Route element={<AdminRoute />}>

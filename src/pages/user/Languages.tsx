@@ -1,15 +1,24 @@
 import { useEffect } from "react"
-import { useAppDispatch, useAppSelector } from "../hooks/redux"
-import { fetchLanguages } from "../features/languages/languageActions"
+import { useAppDispatch, useAppSelector } from "../../hooks/redux"
+import { fetchLanguages } from "../../features/languages/languageActions"
 import { Globe } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 export default function Languages() {
     const dispatch = useAppDispatch()
     const { items: languages, loading, error } = useAppSelector((state) => state.languages)
-
+    const navigate = useNavigate() // Add this
+    
     useEffect(() => {
         dispatch(fetchLanguages()) 
     }, [dispatch])
+
+    const handleLanguageClick = (languageId: string, languageName: string) => {
+        // Navigate to questions page with language info
+        navigate(`/languages/${languageId}`, {
+            state: { languageName }
+        })
+    }
 
     if (loading) {
         return (
@@ -39,10 +48,11 @@ export default function Languages() {
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
                     {languages.map((lang) => (
-                    <div
-                        key={lang._id}
-                        className="group relative bg-gray-800/40 backdrop-blur-sm border border-gray-700 rounded-3xl overflow-hidden shadow-2xl hover:shadow-green-500/30 transition-all duration-500 hover:-translate-y-4 cursor-pointer"
-                    >
+                        <div
+                            key={lang._id}
+                            onClick={() => handleLanguageClick(lang._id, lang.name)}
+                            className="group relative bg-gray-800/40 backdrop-blur-sm border border-gray-700 rounded-3xl overflow-hidden shadow-2xl hover:shadow-green-500/30 transition-all duration-500 hover:-translate-y-4 cursor-pointer"
+                        >
                         <div className="h-48 relative overflow-hidden">
                         {lang.iconUrl ? (
                             <img
@@ -60,7 +70,7 @@ export default function Languages() {
                             <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                                 <h3 className="text-2xl font-bold text-white mb-2">{lang.name}</h3>
                                 <p className="text-green-400 text-sm font-medium">
-                                    {lang.questions?.length || 0} quizzes
+                                    {lang.questionCount || 0} quizzes
                                 </p>
                             </div>
                         </div>
@@ -70,7 +80,7 @@ export default function Languages() {
                                 {lang.name}
                             </h3>
                             <p className="text-gray-400 text-sm mt-2">
-                                {lang.questions?.length || 0} quizzes available
+                                {lang.questionCount || 0} quizzes available
                             </p>
                         </div>
                     </div>
