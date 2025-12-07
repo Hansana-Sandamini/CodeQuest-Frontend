@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom" 
 import { useAppSelector, useAppDispatch } from "../../hooks/redux"
 import type { ILanguage } from "../../types/Language"
 import { Globe, Plus, Edit2, Trash2, X, Upload } from "lucide-react"
@@ -6,6 +7,7 @@ import { fetchLanguages, createLang, updateLang, deleteLang } from "../../featur
 import swal from "../../utils/swal"  
 
 export default function LanguagesAdmin() {
+    const navigate = useNavigate() 
     const dispatch = useAppDispatch()
     const { items: languages, loading, error } = useAppSelector((state) => state.languages)
 
@@ -106,7 +108,7 @@ export default function LanguagesAdmin() {
             cancelButtonText: "Cancel",
             reverseButtons: true,
             customClass: {
-                confirmButton: "px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 shadow-lg transition-all",
+                confirmButton: "px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 shadow-lg transition-all",
                 cancelButton: "px-8 py-3 rounded-xl font-semibold text-white bg-gray-700 hover:bg-gray-600 mr-4 transition-all",
             },
             buttonsStyling: false,
@@ -196,7 +198,8 @@ export default function LanguagesAdmin() {
                         languages.map((lang) => (
                             <div
                                 key={lang._id}
-                                className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-3xl overflow-hidden shadow-2xl hover:shadow-green-500/20 transition-all duration-500 hover:-translate-y-3"
+                                className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-3xl overflow-hidden shadow-2xl hover:shadow-green-500/20 transition-all duration-500 hover:-translate-y-3 cursor-pointer"
+                                onClick={() => navigate(`/admin/languages/${lang._id}/questions`)}  // ← CLICK GOES TO QUESTIONS
                             >
                                 <div className="h-48 relative overflow-hidden bg-gray-900">
                                     {lang.iconUrl ? (
@@ -212,12 +215,23 @@ export default function LanguagesAdmin() {
                                     )}
                                     <div className="absolute bottom-3 left-3">
                                         <span className="bg-green-500/20 backdrop-blur-sm text-green-400 px-4 py-1.5 rounded-full text-sm font-medium border border-green-500/30">
-                                            {lang.questions?.length || 0} questions
+                                            {lang.questionCount} {lang.questionCount === 1 ? "question" : "questions"}
                                         </span>
+                                    </div>
+
+                                    {/* Hover Overlay */}
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                        <div className="text-center">
+                                            <Globe size={48} className="mx-auto text-green-400 mb-3" />
+                                            <p className="text-xl font-bold text-white">Manage Questions</p>
+                                            <p className="text-sm text-gray-300">
+                                                {lang.questionCount} {lang.questionCount === 1 ? "question" : "questions"}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="p-6">
+                                <div className="p-6" onClick={(e) => e.stopPropagation()}>
                                     <h3 className="text-2xl font-bold text-white mb-2">{lang.name}</h3>
                                     {lang.description && (
                                         <p className="text-gray-400 text-sm line-clamp-2 mb-5">{lang.description}</p>

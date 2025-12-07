@@ -13,6 +13,7 @@ import { useAuth } from "./hooks/useAuth"
 import Sidebar from "./components/Sidebar"
 import AdminLanguages from "./pages/admin/AdminLanguages"
 import Languages from "./pages/Languages"
+import QuestionsByLanguage from "./pages/admin/QuestionsByLanguage"
 
 export default function App() {
     const { isAuthenticated } = useAuth()
@@ -42,6 +43,7 @@ export default function App() {
                         <Route element={<AdminRoute />}>
                             <Route path="/admin" element={<AdminDashboard />} />
                             <Route path="/admin/languages" element={<AdminLanguages />} />
+                            <Route path="/admin/languages/:languageId/questions" element={<QuestionsByLanguage />} />
                         </Route>
                     </Route>
 

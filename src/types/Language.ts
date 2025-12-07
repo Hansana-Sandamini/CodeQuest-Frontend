@@ -4,4 +4,5 @@ export interface ILanguage {
     description?: string
     iconUrl?: string
     questions: string[] // array of question IDs
+    questionCount: number
 }
