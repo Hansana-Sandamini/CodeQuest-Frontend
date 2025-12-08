@@ -21,4 +21,7 @@ export const questionApi = {
 
     getOneForEdit: (id: string) => 
         api.get<{ data: Question }>(`/questions/${id}/full`), 
+
+    getHint: (id: string) => 
+        api.get<{ success: boolean; hint: string; message: string }>(`/hints/question/${id}`),
 }

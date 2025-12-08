@@ -17,6 +17,7 @@ export interface TestCase {
 export interface Question {
     _id: string
     language: {
+        judge0Id: any
         _id: string
         name: string
         iconUrl?: string

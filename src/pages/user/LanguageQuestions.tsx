@@ -85,7 +85,7 @@ export default function LanguageQuestions() {
                     {questions.map((q: Question, index) => (
                         <Link
                             key={q._id}
-                            to={`/quiz/${q._id}`}
+                            to={`/question/${q._id}`}
                             state={{ languageName, questionTitle: q.title }}
                             className="group block h-full"
                         >

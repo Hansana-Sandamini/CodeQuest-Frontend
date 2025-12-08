@@ -15,6 +15,7 @@ import AdminLanguages from "./pages/admin/AdminLanguages"
 import Languages from "./pages/user/Languages"
 import QuestionsByLanguage from "./pages/admin/QuestionsByLanguage"
 import LanguageQuestions from "./pages/user/LanguageQuestions"
+import QuestionPage from "./pages/user/QuestionPage"
 
 export default function App() {
     const { isAuthenticated } = useAuth()
@@ -40,6 +41,7 @@ export default function App() {
                         <Route path="/dashboard" element={<UserDashboard />} />
                         <Route path="/languages" element={<Languages />} />
                         <Route path="/languages/:languageId" element={<LanguageQuestions />} />
+                        <Route path="/question/:id" element={<QuestionPage />} />
                         
                         {/* Admin-Only Routes nested inside ProtectedRoute */}
                         <Route element={<AdminRoute />}>
