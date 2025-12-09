@@ -1,8 +1,18 @@
 import api from "./axiosInstance"
 
 export const progressApi = {
-    submit: (id: string, data: { selectedAnswer?: number; code?: string }) =>
-        api.post<{ message: string; isCorrect: boolean; pointsEarned: number; progress: any }>(`/progress/submit/${id}`, data),
+    submit: async (id: string, data: { selectedAnswer?: number; code?: string }) => {
+        const res = await api.post(`/progress/submit/${id}`, data)
+        return {
+            message: res.data.message,
+            isCorrect: res.data.isCorrect,
+            pointsEarned: res.data.pointsEarned || 0,
+            progress: res.data.progress || {}
+        }
+    },
 
-    getAll: () => api.get<{ data: any[] }>("/progress"),
+    getAll: async () => {
+        const res = await api.get("/progress")
+        return res.data.data || []
+    }
 }

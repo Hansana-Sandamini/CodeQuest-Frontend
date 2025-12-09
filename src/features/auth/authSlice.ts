@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import { loginUserAction, registerUserAction, loadProfileAction } from "./authActions"
 
 interface AuthState {
@@ -23,6 +23,21 @@ const authSlice = createSlice({
             state.loading = false   
             localStorage.removeItem("accessToken")
             localStorage.removeItem("refreshToken")
+        },
+        updateUser: (state, action: PayloadAction<any>) => {
+            if (state.user) {
+                // Merge the existing user with the updated data
+                state.user = { ...state.user, ...action.payload }
+            } else {
+                // If no user exists, set the new user data
+                state.user = action.payload
+                state.isAuthenticated = true
+            }
+        },
+        updateProfilePicture: (state, action: PayloadAction<{ profilePicture: string }>) => {
+            if (state.user) {
+                state.user.profilePicture = action.payload.profilePicture
+            }
         }
     },
     extraReducers: (builder) => {
@@ -57,5 +72,5 @@ const authSlice = createSlice({
     }
 })
 
-export const { logout } = authSlice.actions
+export const { logout, updateUser, updateProfilePicture } = authSlice.actions
 export default authSlice.reducer
