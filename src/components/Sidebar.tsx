@@ -23,13 +23,13 @@ const Sidebar = () => {
         : [
               { path: "/dashboard", label: "Dashboard", icon: <Home size={20} /> },
               { path: "/languages", label: "Languages", icon: <Globe size={20} /> },
-              { path: "/leaderboard", label: "Leaderboard", icon: <Trophy size={20} /> },
+              { path: "/leaderboard/me", label: "Leaderboard", icon: <Trophy size={20} /> },
               { path: "/profile", label: "Profile", icon: <User size={20} /> },
               { path: "/logout", label: "Logout", icon: <LogOut size={20} /> },
           ]
 
     return (
-        <div className="fixed left-0 top-0 h-full w-64 bg-gray-900/95 backdrop-blur-lg border-r border-gray-800 pt-20 z-40">
+        <div className="fixed left-0 top-0 h-full w-74 bg-gray-900/95 backdrop-blur-lg border-r border-gray-800 pt-20 z-40">
             <div className="px-6 py-8 space-y-8">
 
                 {/* User Info */}

@@ -1,9 +1,17 @@
 export interface ILeaderboardEntry {
-    user: {
-        _id: string
-        username: string
-        profilePicture?: string
-    }
-    pointsEarned: number
+    userId: string
+    username: string
+    profilePicture?: string
+    totalPoints: number
+    badgesCount: number
+    rank?: number
+}
+
+export interface IMyRank {
     rank: number
+    userId: string
+    username: string
+    profilePicture?: string
+    totalPoints: number
+    badgesCount: number
 }
