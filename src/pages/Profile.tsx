@@ -188,9 +188,9 @@ const Profile = () => {
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-linear-to-br from-gray-900 to-black text-white py-20 px-8">
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h1 className="text-4xl font-bold mb-4 bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                    <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                         Profile
                     </h1>
                     <p className="text-xl text-gray-400">Please log in to view your profile</p>
@@ -200,11 +200,12 @@ const Profile = () => {
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-900 to-black text-white py-20 px-8">
+        // <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
+        <div className="ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold mb-4 bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                    <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                         Your Profile {isAdmin && <span className="text-red-400">(Admin)</span>}
                     </h1>
                     {isAdmin && (
@@ -228,7 +229,7 @@ const Profile = () => {
                                             className="w-24 h-24 rounded-full object-cover ring-4 ring-green-500/50"
                                         />
                                     ) : (
-                                        <div className="w-24 h-24 rounded-full bg-linear-to-r from-green-500 to-blue-500 flex items-center justify-center font-bold text-3xl text-white">
+                                        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center font-bold text-3xl text-white">
                                             {user?.username?.[0]?.toUpperCase()}
                                         </div>
                                     )}

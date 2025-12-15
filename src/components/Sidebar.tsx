@@ -41,7 +41,7 @@ const Sidebar = () => {
                             className="w-12 h-12 rounded-full object-cover ring-2 ring-green-500"
                         />
                     ) : (
-                        <div className="w-12 h-12 rounded-full bg-linear-to-r from-green-500 to-blue-500 flex items-center justify-center font-bold text-xl text-white">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center font-bold text-xl text-white">
                             {user?.username?.[0]?.toUpperCase()}
                         </div>
                     )}
@@ -79,7 +79,7 @@ const Sidebar = () => {
                             to={item.path}
                             className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 ${
                                 isActive(item.path)
-                                    ? "bg-linear-to-r from-green-600 to-blue-600 text-white shadow-lg"
+                                    ? "bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-lg"
                                     : "text-gray-300 hover:bg-gray-800 hover:text-white"
                             }`}
                         >

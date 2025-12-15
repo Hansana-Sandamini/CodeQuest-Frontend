@@ -54,20 +54,20 @@ const AdminUsers = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-linear-to-br from-gray-900 to-black flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
                 <div className="text-2xl text-gray-400 animate-pulse">Loading users...</div>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-900 to-black text-white p-8">
+        <div className="ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
             <div className="max-w-7xl mx-auto">
 
                 {/* Header */}
                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12">
                     <div>
-                        <h1 className="text-4xl font-bold mb-4 bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                             Manage Users
                         </h1>
                         <p className="text-gray-400 mt-3 text-lg">
@@ -122,7 +122,7 @@ const AdminUsers = () => {
                                                         className="w-10 h-10 rounded-full object-cover"
                                                     />
                                                 ) : (
-                                                    <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-purple-500 flex items-center justify-center font-bold text-white">
+                                                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center font-bold text-white">
                                                         {user.username[0].toUpperCase()}
                                                     </div>
                                                 )}

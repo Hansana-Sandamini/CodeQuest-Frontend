@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import { loginUserAction, registerUserAction, loadProfileAction } from "./authActions"
+import { loginUserAction, registerUserAction, loadProfileAction, forgotPasswordAction } from "./authActions"
 
 interface AuthState {
     user: any
@@ -69,6 +69,9 @@ const authSlice = createSlice({
             localStorage.removeItem("accessToken")
             localStorage.removeItem("refreshToken")
         })
+        .addCase(forgotPasswordAction.pending, (state) => { state.loading = true })
+        .addCase(forgotPasswordAction.fulfilled, (state) => { state.loading = false })
+        .addCase(forgotPasswordAction.rejected, (state) => { state.loading = false })
     }
 })
 

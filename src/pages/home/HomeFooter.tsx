@@ -8,10 +8,10 @@ const HomeFooter = () => {
                 {/* Logo + Description */}
                 <div>
                     <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                        <div className="w-12 h-12 bg-linear-to-r from-green-600 to-blue-500 rounded-xl flex items-center justify-center">
+                        <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-blue-500 rounded-xl flex items-center justify-center">
                             <span className="text-2xl font-bold">⚡</span>
                         </div>
-                        <span className="text-2xl font-bold bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                        <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                             CodeQuest
                         </span>
                     </div>
@@ -49,7 +49,7 @@ const HomeFooter = () => {
                             placeholder="Your email"
                             className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:border-green-500 focus:outline-none text-sm"
                         />
-                        <button className="px-6 py-3 bg-linear-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-xl font-medium transition text-sm">
+                        <button className="px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-xl font-medium transition text-sm">
                             Subscribe
                         </button>
                     </div>

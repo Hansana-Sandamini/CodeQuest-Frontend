@@ -20,34 +20,38 @@ const Navbar = () => {
             <div className="max-w-7xl mx-auto flex justify-between items-center">
                 {/* Logo */}
                 <Link to="/" className="flex items-center space-x-3 group">
-                    <div className="w-10 h-10 bg-linear-to-r from-green-600 to-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                         <span className="font-bold text-lg">⚡</span>
                     </div>
-                    <span className="text-2xl font-bold bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                    <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                         CodeQuest
                     </span>
                 </Link>
 
                 {/* Middle: Navigation Links - Always Visible */}
                 <div className="hidden md:flex items-center gap-8">
-                    <button
-                        onClick={() => scrollToSection("home")}
-                        className="font-medium hover:text-green-400 transition"
-                    >
-                        Home
-                    </button>
-                    <button
-                        onClick={() => scrollToSection("about")}
-                        className="font-medium hover:text-green-400 transition"
-                    >
-                        About
-                    </button>
-                    <button
-                        onClick={() => scrollToSection("contact")}
-                        className="font-medium hover:text-green-400 transition"
-                    >
-                        Contact
-                    </button>
+                    {!isAuthenticated ? (
+                        <>
+                            <button
+                                onClick={() => scrollToSection("home")}
+                                className="font-medium hover:text-green-400 transition"
+                            >
+                                Home
+                            </button>
+                            <button
+                                onClick={() => scrollToSection("about")}
+                                className="font-medium hover:text-green-400 transition"
+                            >
+                                About
+                            </button>
+                            <button
+                                onClick={() => scrollToSection("contact")}
+                                className="font-medium hover:text-green-400 transition"
+                            >
+                                Contact
+                            </button>
+                        </>
+                    ) : null}
                 </div>
 
                 {/* Right Side */}
@@ -62,7 +66,7 @@ const Navbar = () => {
                             </Link>
                             <Link
                                 to="/register"
-                                className="bg-linear-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-6 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-6 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
                             >
                                 Get Started
                             </Link>
@@ -89,7 +93,7 @@ const Navbar = () => {
 
                                     {/* Fallback: Initial Letter */}
                                     <div
-                                        className={`w-10 h-10 rounded-full bg-linear-to-r from-green-500 to-blue-500 flex items-center justify-center font-bold text-lg shadow-lg ${
+                                        className={`w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center font-bold text-lg shadow-lg ${
                                             user?.profilePicture ? "hidden" : ""
                                         }`}
                                     >
@@ -105,7 +109,7 @@ const Navbar = () => {
                                 {/* Logout Button */}
                                 <button
                                     onClick={() => dispatch(logout())}
-                                    className="bg-linear-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 px-5 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+                                    className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 px-5 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
                                 >
                                     Logout
                                 </button>

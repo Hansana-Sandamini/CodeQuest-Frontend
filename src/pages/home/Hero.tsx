@@ -6,10 +6,10 @@ const Hero = () => {
         <section className="flex items-center justify-center px-4 py-24 lg:py-32">
             <div className="text-center max-w-4xl">
                 <div className="mb-8">
-                    <div className="w-20 h-20 bg-linear-to-r from-green-600 to-blue-500 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-2xl shadow-purple-500/20">
+                    <div className="w-20 h-20 bg-gradient-to-r from-green-600 to-blue-500 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-2xl shadow-purple-500/20">
                         <span className="text-2xl font-bold">⚡</span>
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-bold bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-6">
+                    <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-6">
                         CodeQuest
                     </h1>
                 </div>

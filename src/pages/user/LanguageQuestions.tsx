@@ -60,7 +60,7 @@ export default function LanguageQuestions() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-linear-to-br from-gray-900 to-black flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
                 <div className="text-2xl text-gray-400 animate-pulse">Loading questions...</div>
             </div>
         )
@@ -68,14 +68,14 @@ export default function LanguageQuestions() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-linear-to-br from-gray-900 to-black flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
                 <div className="text-red-400 text-xl">Failed to load questions: {error}</div>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-900 to-black text-white py-20 px-8">
+        <div className="ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
             <div className="max-w-6xl mx-auto">
                 {/* Back Button */}
                 <Link
@@ -88,7 +88,7 @@ export default function LanguageQuestions() {
 
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <h1 className="text-5xl font-bold mb-4 bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                    <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                         {languageName} Quizzes
                     </h1>
                     <p className="text-xl text-gray-400">

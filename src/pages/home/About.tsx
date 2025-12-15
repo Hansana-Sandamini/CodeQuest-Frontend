@@ -4,7 +4,7 @@ const About = () => {
     return (
         <section className="py-24 px-4">
             <div className="max-w-7xl mx-auto">
-                <h2 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent text-center mb-16">
+                <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent text-center mb-16">
                     About CodeQuest
                 </h2>
 
@@ -36,14 +36,14 @@ const About = () => {
 
                     <div className="flex justify-center">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-linear-to-br from-green-500/30 to-blue-500/30 rounded-3xl blur-3xl -z-10"></div>
+                            <div className="absolute inset-0 bg-gradient-to-br from-green-500/30 to-blue-500/30 rounded-3xl blur-3xl -z-10"></div>
                             <div className="bg-gray-800/40 backdrop-blur-md border border-gray-700 rounded-3xl p-12 text-center">
                                 <div className="flex justify-center gap-6 mb-6">
                                     <Rocket className="w-24 h-24 text-green-400" />
                                     <Sword className="w-24 h-24 text-blue-400" />
                                     <Laptop className="w-24 h-24 text-purple-400" />
                                 </div>
-                                <p className="text-2xl font-bold bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                                <p className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                                     Turn Code into an Epic Journey
                                 </p>
                             </div>

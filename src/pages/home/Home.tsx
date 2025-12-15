@@ -6,7 +6,7 @@ import HomeFooter from "./HomeFooter"
 
 const Home = () => {
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-900 to-black text-white">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
             {/* Hero Section */}
             <section id="home">  
                 <Hero />

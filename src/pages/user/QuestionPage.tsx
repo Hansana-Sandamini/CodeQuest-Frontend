@@ -1,3 +1,4 @@
+// src/pages/user/QuestionPage.tsx
 import { useEffect, useState, useCallback } from "react"
 import { useParams, useLocation, Link, useNavigate } from "react-router-dom"
 import { ArrowLeft, CheckSquare, Code2, Loader2, CheckCircle, XCircle, HelpCircle, Sparkles, RefreshCw } from "lucide-react"
@@ -325,7 +326,7 @@ export default function QuestionPage() {
 
     if (loading || !question) {
         return (
-            <div className="min-h-screen bg-linear-to-br from-gray-900 to-black flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
                 <Loader2 className="w-16 h-16 animate-spin text-green-400" />
             </div>
         )
@@ -335,7 +336,7 @@ export default function QuestionPage() {
     const isCorrectlyCompleted = userProgress?.isCorrect === true
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-900 via-purple-900/20 to-black text-white py-20 px-8">
+        <div className="ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
             <div className="max-w-7xl mx-auto">
 
                 {/* Back Button & Progress */}
@@ -367,7 +368,7 @@ export default function QuestionPage() {
 
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <h1 className="text-5xl font-bold mb-4 bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                    <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                         {questionTitle}
                     </h1>
                     <div className="flex justify-center items-center gap-6 text-gray-400 text-sm">
@@ -399,7 +400,7 @@ export default function QuestionPage() {
                         <button
                             onClick={handleGetHint}
                             disabled={hintLoading}
-                            className="w-full flex items-center justify-center gap-3 bg-linear-to-r from-purple-600 to-indigo-600 
+                            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 to-indigo-600 
                                         hover:from-purple-700 hover:to-indigo-700 py-5 rounded-2xl font-bold text-lg
                                         transition-all duration-300 disabled:opacity-50 shadow-2xl shadow-purple-500/30"
                         >
@@ -408,7 +409,7 @@ export default function QuestionPage() {
                         </button>
 
                         {hint && (
-                            <div className="p-8 bg-linear-to-r from-purple-900/40 to-indigo-900/40 border-2 border-purple-500/50 
+                            <div className="p-8 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border-2 border-purple-500/50 
                                             rounded-2xl text-purple-300 backdrop-blur-sm shadow-xl shadow-purple-500/20">
                                 <strong className="flex items-center gap-3 text-2xl mb-3">
                                     <HelpCircle size={28} /> Hint
@@ -475,7 +476,7 @@ export default function QuestionPage() {
                                 <button
                                     onClick={handleMCQSubmit}
                                     disabled={selectedOption === null || submitLoading || isCorrectlyCompleted}
-                                    className="w-full py-6 rounded-2xl bg-linear-to-r from-green-600 to-blue-600 
+                                    className="w-full py-6 rounded-2xl bg-gradient-to-r from-green-600 to-blue-600 
                                                 hover:from-green-700 hover:to-blue-700 font-bold text-xl 
                                                 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-2xl shadow-green-500/40
                                                 flex items-center justify-center gap-4"
@@ -549,7 +550,7 @@ export default function QuestionPage() {
                                     <button
                                         onClick={handleCodeSubmit}
                                         disabled={submitLoading || isCorrectlyCompleted}
-                                        className="flex items-center gap-4 bg-linear-to-r from-green-600 to-blue-600 
+                                        className="flex items-center gap-4 bg-gradient-to-r from-green-600 to-blue-600 
                                                     hover:from-green-700 hover:to-blue-700 px-10 py-5 rounded-2xl font-bold text-xl
                                                     transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-green-500/50"
                                     >
@@ -613,8 +614,8 @@ export default function QuestionPage() {
                             {showResult && (
                                 <div className={`p-10 rounded-2xl text-center text-3xl font-bold animate-pulse border-4
                                     ${isCorrect 
-                                    ? "bg-linear-to-r from-green-600/30 to-emerald-600/30 border-green-500 text-green-400 shadow-2xl shadow-green-500/50" 
-                                    : "bg-linear-to-r from-red-600/30 to-rose-600/30 border-red-500 text-red-400 shadow-2xl shadow-red-500/50"}`}
+                                    ? "bg-gradient-to-r from-green-600/30 to-emerald-600/30 border-green-500 text-green-400 shadow-2xl shadow-green-500/50" 
+                                    : "bg-gradient-to-r from-red-600/30 to-rose-600/30 border-red-500 text-red-400 shadow-2xl shadow-red-500/50"}`}
                                 >
                                     {isCorrect 
                                     ? "All Tests Passed! You're a genius!" 

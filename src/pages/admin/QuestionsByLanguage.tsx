@@ -218,7 +218,7 @@ export default function QuestionsByLanguage() {
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-900 to-black text-white p-8">
+        <div className="ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
             <div className="max-w-7xl mx-auto">
 
                 {/* Header */}
@@ -236,13 +236,13 @@ export default function QuestionsByLanguage() {
                             {language.iconUrl ? (
                                 <img src={language.iconUrl} alt={language.name} className="w-24 h-24 rounded-3xl shadow-2xl border-4 border-gray-800 object-cover" />
                             ) : (
-                                <div className="w-24 h-24 rounded-3xl bg-linear-to-br from-purple-600 to-blue-600 flex items-center justify-center">
+                                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
                                     <Globe size={48} className="text-white/30" />
                                 </div>
                             )}
 
                             <div>
-                                <h1 className="text-4xl font-bold bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                                <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                                     {language.name}
                                 </h1>
                                 <p className="text-2xl text-gray-400 mt-3">
@@ -253,7 +253,7 @@ export default function QuestionsByLanguage() {
 
                         <button
                             onClick={() => openModal()}
-                            className="flex items-center gap-3 bg-linear-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105"
+                            className="flex items-center gap-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105"
                         >
                             <Plus size={32} />
                             Add New Question
@@ -296,13 +296,13 @@ export default function QuestionsByLanguage() {
                                 <div className="flex gap-3">
                                     <button
                                         onClick={() => openModal(q)}
-                                        className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-4 rounded-xl font-bold transition-all shadow-lg"
+                                        className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-4 rounded-xl font-bold transition-all shadow-lg"
                                     >
                                         <Edit2 size={20} /> Edit
                                     </button>
                                     <button
                                         onClick={() => handleDelete(q._id)}
-                                        className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 py-4 rounded-xl font-bold transition-all shadow-lg"
+                                        className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 py-4 rounded-xl font-bold transition-all shadow-lg"
                                     >
                                         <Trash2 size={20} /> Delete
                                     </button>
@@ -333,7 +333,7 @@ export default function QuestionsByLanguage() {
                             <X size={32} />
                         </button>
 
-                        <h2 className="text-4xl font-bold bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-10">
+                        <h2 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-10">
                             {editingQuestion ? "Edit" : "Add New"} Question — {language.name}
                         </h2>
 
@@ -523,7 +523,7 @@ export default function QuestionsByLanguage() {
                                 <button
                                     type="submit"
                                     disabled={submitting || !form.title.trim()}
-                                    className="flex-1 py-4 rounded-xl bg-linear-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 font-bold text-lg shadow-lg flex items-center justify-center gap-3 transition transform hover:scale-105 disabled:opacity-50"
+                                    className="flex-1 py-4 rounded-xl bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 font-bold text-lg shadow-lg flex items-center justify-center gap-3 transition transform hover:scale-105 disabled:opacity-50"
                                 >
                                     <Save size={28} />
                                     {submitting ? "Saving..." : editingQuestion ? "Update" : "Create"} Question

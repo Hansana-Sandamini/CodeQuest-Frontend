@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { loginUser, registerUser, getMyProfile } from "../../api/authService"
+import { loginUser, registerUser, getMyProfile, forgotPassword, resetPassword } from "../../api/authService"
 import type { LoginRequest } from "../../types/Auth"
 
 export const registerUserAction = createAsyncThunk(
@@ -73,6 +73,30 @@ export const loadProfileAction = createAsyncThunk(
             return { ...user, roles }
         } catch (err: any) {
             return thunkAPI.rejectWithValue(err.response?.data)
+        }
+    }
+)
+
+export const forgotPasswordAction = createAsyncThunk(
+    "auth/forgotPassword",
+    async (payload: { email: string }, thunkAPI) => {
+        try {
+            const res = await forgotPassword(payload)
+            return res  
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(err.response?.data || { message: "Request failed" })
+        }
+    }
+)
+
+export const resetPasswordAction = createAsyncThunk(
+    "auth/resetPassword",
+    async ({ email, otp, newPassword }: { email: string; otp: string; newPassword: string }, thunkAPI) => {
+        try {
+            const res = await resetPassword({ email, otp, newPassword }) 
+            return res
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(err.response?.data || { message: "Invalid or expired code" })
         }
     }
 )

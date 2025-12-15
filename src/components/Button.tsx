@@ -4,16 +4,25 @@ type ButtonProps = {
     onClick?: () => void
     disabled?: boolean
     className?: string
+    isLoading?: boolean
 }
 
-const Button = ({ children, type = "button", onClick, disabled, className = "" }: ButtonProps) => {
+const Button = ({ 
+    children, 
+    type = "button", 
+    onClick, 
+    disabled, 
+    className = "", 
+    isLoading = false, 
+}: ButtonProps) => {
+    
     return (
         <button
             type={type}
             onClick={onClick}
             disabled={disabled}
             className={`
-                w-full bg-linear-to-r from-green-600 to-blue-600 
+                w-full bg-gradient-to-r from-green-600 to-blue-600 
                 hover:from-green-700 hover:to-blue-700 
                 text-white font-semibold py-4 rounded-xl 
                 transition-all duration-300 transform hover:scale-105 
@@ -22,7 +31,7 @@ const Button = ({ children, type = "button", onClick, disabled, className = "" }
                 ${className}
             `}
         >
-            {children}
+            {isLoading ? "Loading..." : children}
         </button>
     )
 }

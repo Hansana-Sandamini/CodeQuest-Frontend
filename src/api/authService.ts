@@ -19,3 +19,11 @@ export const refreshAccessToken = async (): Promise<RefreshTokenResponse> => {
     const refreshToken = localStorage.getItem("refreshToken")
     return (await api.post("/auth/refresh", { token: refreshToken })).data
 }
+
+export const forgotPassword = async (payload: { email: string }) => {
+    return (await api.post("/auth/forgot-password", payload)).data  
+}
+
+export const resetPassword = async (payload: { email: string; otp: string; newPassword: string }) => {
+    return (await api.post("/auth/reset-password-otp", payload)).data
+}

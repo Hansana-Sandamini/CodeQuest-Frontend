@@ -48,16 +48,16 @@ const Register = () => {
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-900 to-black flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-4">
             <div className="w-full max-w-2xl">
                 <div className="bg-gray-800/30 backdrop-blur-sm rounded-3xl border border-gray-700 shadow-2xl p-8">
 
                     {/* Header */}
                     <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-linear-to-r from-green-500 to-blue-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                        <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
                             <span className="text-2xl">🚀</span>
                         </div>
-                        <h1 className="text-3xl font-bold bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                        <h1 className="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                             Join CodeQuest
                         </h1>
                         <p className="text-gray-400 mt-2">Start your coding adventure today</p>
