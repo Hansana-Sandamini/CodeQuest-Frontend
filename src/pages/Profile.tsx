@@ -7,6 +7,7 @@ import { userApi } from "../api/userService"
 import swal from "../utils/swal"
 import type { IBadge, ICertificate } from "../types/User"
 import { Link } from "react-router-dom"
+import PasswordInput from "../components/PasswordInput"
 
 const Profile = () => {
     const { user, isAdmin } = useAuth()
@@ -200,7 +201,6 @@ const Profile = () => {
     }
 
     return (
-        // <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
         <div className="ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
@@ -373,37 +373,37 @@ const Profile = () => {
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm text-gray-400 mb-2">Current Password</label>
-                                            <input
-                                                type="password"
+                                            <PasswordInput
                                                 value={passwordData.oldPassword}
                                                 onChange={(e) => setPasswordData({...passwordData, oldPassword: e.target.value})}
-                                                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 disabled:opacity-50"
+                                                placeholder="Current password"
                                                 required
                                                 disabled={loading}
+                                                name="oldPassword"
                                             />
                                         </div>
                                         <div>
                                             <label className="block text-sm text-gray-400 mb-2">New Password</label>
-                                            <input
-                                                type="password"
+                                            <PasswordInput
                                                 value={passwordData.newPassword}
                                                 onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                                                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 disabled:opacity-50"
+                                                placeholder="New password"
                                                 required
                                                 disabled={loading}
                                                 minLength={6}
+                                                name="newPassword"
                                             />
                                         </div>
                                         <div className="md:col-span-2">
                                             <label className="block text-sm text-gray-400 mb-2">Confirm New Password</label>
-                                            <input
-                                                type="password"
+                                            <PasswordInput
                                                 value={passwordData.confirmPassword}
                                                 onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                                                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-green-500 disabled:opacity-50"
+                                                placeholder="Confirm new password"
                                                 required
                                                 disabled={loading}
                                                 minLength={6}
+                                                name="confirmPassword"
                                             />
                                         </div>
                                     </div>

@@ -5,6 +5,7 @@ import type { AppDispatch } from "../store/store"
 import { Link, useNavigate } from "react-router-dom"
 import Button from "../components/Button"
 import { handleAuthAction } from "../utils/swal"
+import PasswordInput from "../components/PasswordInput"
 
 const Register = () => {
     const dispatch = useDispatch<AppDispatch>()
@@ -65,15 +66,14 @@ const Register = () => {
 
                     <form onSubmit={submitHandler} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                        {/* Form Fields */}
+                        {/* Form Fields for non-password inputs */}
                         {[
                             { key: "firstname", label: "First Name", type: "text" },
                             { key: "lastname", label: "Last Name", type: "text" },
                             { key: "username", label: "Username", type: "text" },
                             { key: "email", label: "Email", type: "email" },
-                            { key: "password", label: "Password", type: "password", fullWidth: true },
-                        ].map(({ key, label, type, fullWidth }) => (
-                            <div key={key} className={fullWidth ? "md:col-span-2" : ""}>
+                        ].map(({ key, label, type }) => (
+                            <div key={key}>
                                 <input
                                     type={type}
                                     name={key}
@@ -85,6 +85,17 @@ const Register = () => {
                                 />
                             </div>
                         ))}
+
+                        {/* Password field - separate from the map */}
+                        <div className="md:col-span-2">
+                            <PasswordInput
+                                value={formData.password}
+                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                placeholder="Password"
+                                required
+                                minLength={6}
+                            />
+                        </div>
 
                         {/* Profile Picture Upload */}
                         <div className="md:col-span-2">

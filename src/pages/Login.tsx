@@ -7,6 +7,7 @@ import Button from "../components/Button"
 import swal, { handleAuthAction } from "../utils/swal"
 import RoleBasedRedirect from "../components/RoleBasedRedirect"
 import { useAuth } from "../hooks/useAuth"
+import PasswordInput from "../components/PasswordInput"
 
 const Login = () => {
     const dispatch = useDispatch<AppDispatch>()
@@ -134,12 +135,10 @@ const Login = () => {
                         </div>
 
                         <div>
-                            <input
-                                type="password"
-                                placeholder="Enter your password"
-                                className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                            <PasswordInput
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter your password"
                                 required
                             />
                         </div>
@@ -224,20 +223,27 @@ const Login = () => {
                             maxLength={6}
                             className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-4 text-white placeholder-gray-400 text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-green-500 transition"
                         />
-                        <input
-                            type="password"
-                            placeholder="New password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            className="w-full mt-4 bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-                        />
-                        <input
-                            type="password"
-                            placeholder="Confirm new password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full mt-4 bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-                        />
+
+                         <div className="mt-4">
+                            <PasswordInput
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                placeholder="New password"
+                                required
+                                minLength={6}
+                            />
+                        </div>
+                            
+                        <div className="mt-4">
+                            <PasswordInput
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="Confirm new password"
+                                required
+                                minLength={6}
+                            />
+                        </div>
+
                         <div className="flex gap-4 mt-8">
                             <Button onClick={handleResetPassword} isLoading={isLoading} className="flex-1 px-8 py-3">
                                 Reset Password
