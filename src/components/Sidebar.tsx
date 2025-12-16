@@ -1,15 +1,24 @@
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 import { Home, Globe, Trophy, Users, User, LogOut } from "lucide-react"
+import { useDispatch } from "react-redux"
+import { logout } from "../features/auth/authSlice"
 
 const Sidebar = () => {
     const { user } = useAuth()
     const location = useLocation()
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const isActive = (path: string) => location.pathname === path
 
     const isAdmin = user?.roles?.includes("ADMIN") || user?.roles?.includes("admin")
 
+    const handleLogout = () => {
+        dispatch(logout())
+        navigate("/login")
+    }
+    
     // Define menu items with icons based on role
     const menuItems = isAdmin
         ? [
@@ -18,14 +27,12 @@ const Sidebar = () => {
               { path: "/leaderboard", label: "Leaderboard", icon: <Trophy size={20} /> },
               { path: "/admin/users", label: "Users", icon: <Users size={20} /> },
               { path: "/profile", label: "Profile", icon: <User size={20} /> },
-              { path: "/logout", label: "Logout", icon: <LogOut size={20} /> },
           ]
         : [
               { path: "/dashboard", label: "Dashboard", icon: <Home size={20} /> },
               { path: "/languages", label: "Languages", icon: <Globe size={20} /> },
               { path: "/leaderboard/me", label: "Leaderboard", icon: <Trophy size={20} /> },
               { path: "/profile", label: "Profile", icon: <User size={20} /> },
-              { path: "/logout", label: "Logout", icon: <LogOut size={20} /> },
           ]
 
     return (
@@ -89,6 +96,18 @@ const Sidebar = () => {
                             <span className="font-medium">{item.label}</span>
                         </Link>
                     ))}
+
+                    {/* Logout button - separate from other menu items */}
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 text-gray-300 hover:bg-red-900/20 hover:text-red-300 hover:border-red-500/30 border border-transparent"
+                    >
+                        <span className="text-gray-400">
+                            <LogOut size={20} />
+                        </span>
+                        <span className="font-medium">Logout</span>
+                    </button>
+
                 </nav>
             </div>
         </div>

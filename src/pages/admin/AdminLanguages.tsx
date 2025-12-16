@@ -240,7 +240,7 @@ export default function LanguagesAdmin() {
                                     <div className="flex gap-3">
                                         <button
                                             onClick={() => openModal(lang)}
-                                            className="flex-1 flex items-center justify-center gap-2 bg-lgradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-3 rounded-xl font-medium transition"
+                                            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-3 rounded-xl font-medium transition"
                                         >
                                             <Edit2 size={18} />
                                             Edit
