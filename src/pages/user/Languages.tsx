@@ -1,13 +1,31 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux"
 import { fetchLanguages } from "../../features/languages/languageActions"
 import { Globe } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { usePagination } from "../../hooks/usePagination"
+import { SearchBar } from "../../components/SearchBar"
+import { Pagination } from "../../components/Pagination"
 
 export default function Languages() {
     const dispatch = useAppDispatch()
     const { items: languages, loading, error } = useAppSelector((state) => state.languages)
-    const navigate = useNavigate() // Add this
+    const navigate = useNavigate() 
+    
+    const [searchTerm, setSearchTerm] = useState("")
+    const ITEMS_PER_PAGE = 5
+        const {
+        currentPage,
+        setCurrentPage,
+        filteredData: filteredLanguages,
+        paginatedData: paginatedLanguages,
+        totalPages,
+    } = usePagination({
+        data: languages,
+        itemsPerPage: ITEMS_PER_PAGE,
+        searchTerm,
+        searchFields: ['name', 'description'],
+    })
     
     useEffect(() => {
         dispatch(fetchLanguages()) 
@@ -39,15 +57,36 @@ export default function Languages() {
     return (
         <div className="ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
             <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-16">
+                <div className="text-center mb-16  border-b border-gray-700 pb-6">
                     <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                         Choose Your Language
                     </h1>
                     <p className="text-xl text-gray-400">Master coding with interactive quizzes</p>
                 </div>
 
+                {/* Search Bar */}
+                <div className="mb-8">
+                    <SearchBar
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                        placeholder="Search languages by name or description..."
+                    />
+                    <div className="mt-4 flex flex-wrap items-center justify-between text-gray-400">
+                        <p>
+                            Showing {paginatedLanguages.length} of {filteredLanguages.length} languages
+                            {searchTerm && (
+                                <span> for "<span className="text-green-400">{searchTerm}</span>"</span>
+                            )}
+                        </p>
+                        {filteredLanguages.length > ITEMS_PER_PAGE && (
+                            <p>Page {currentPage} of {totalPages}</p>
+                        )}
+                    </div>
+                </div>
+
+                {/* Languages Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-                    {languages.map((lang) => (
+                    {paginatedLanguages.map((lang) => (
                         <div
                             key={lang._id}
                             onClick={() => handleLanguageClick(lang._id, lang.name)}
@@ -92,6 +131,34 @@ export default function Languages() {
                         <Globe size={100} className="mx-auto text-gray-600 mb-6" />
                         <h3 className="text-3xl font-bold text-gray-500">No languages available yet</h3>
                     </div>
+                )}
+
+                {paginatedLanguages.length === 0 ? (
+                    <div className="text-center py-20">
+                        <Globe size={100} className="mx-auto text-gray-600 mb-6" />
+                        <h3 className="text-3xl font-bold text-gray-500 mb-3">
+                            {searchTerm ? "No matching languages found" : "No languages available yet"}
+                        </h3>
+                        <p className="text-gray-400 text-lg">
+                            {searchTerm ? "Try a different search term" : "Check back later for new languages!"}
+                        </p>
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm("")}
+                                className="mt-6 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 rounded-xl font-medium hover:from-green-700 hover:to-blue-700 transition"
+                            >
+                                Clear Search
+                            </button>
+                        )}
+                    </div>
+                ) : (
+                    /* Pagination */
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        className="mt-12"
+                    />
                 )}
             </div>
         </div>

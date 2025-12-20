@@ -1,4 +1,3 @@
-// src/pages/user/QuestionPage.tsx
 import { useEffect, useState, useCallback } from "react"
 import { useParams, useLocation, Link, useNavigate } from "react-router-dom"
 import { ArrowLeft, CheckSquare, Code2, Loader2, CheckCircle, XCircle, HelpCircle, Sparkles, RefreshCw } from "lucide-react"

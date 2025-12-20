@@ -5,12 +5,30 @@ import type { ILanguage } from "../../types/Language"
 import { Globe, Plus, Edit2, Trash2, X, Upload } from "lucide-react"
 import { fetchLanguages, createLang, updateLang, deleteLang } from "../../features/languages/languageActions"
 import swal from "../../utils/swal"  
+import { usePagination } from "../../hooks/usePagination"
+import { SearchBar } from "../../components/SearchBar"
+import { Pagination } from "../../components/Pagination"
 
 export default function LanguagesAdmin() {
     const navigate = useNavigate() 
     const dispatch = useAppDispatch()
     const { items: languages, loading, error } = useAppSelector((state) => state.languages)
 
+    const [searchTerm, setSearchTerm] = useState("")
+    const ITEMS_PER_PAGE = 4
+    const {
+        currentPage,
+        setCurrentPage,
+        filteredData: filteredLanguages,
+        paginatedData: paginatedLanguages,
+        totalPages,
+    } = usePagination<ILanguage>({
+        data: languages,
+        itemsPerPage: ITEMS_PER_PAGE,
+        searchTerm,
+        searchFields: ['name', 'description'],
+    })
+    
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingLang, setEditingLang] = useState<ILanguage | null>(null)
     const [form, setForm] = useState({
@@ -173,7 +191,7 @@ export default function LanguagesAdmin() {
             <div className="max-w-7xl mx-auto">
 
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12 border-b border-gray-700 pb-6">
                     <div>
                         <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                             Manage Languages
@@ -192,10 +210,30 @@ export default function LanguagesAdmin() {
                     </button>
                 </div>
 
+                {/* Search Bar */}
+                <div className="mb-8">
+                    <SearchBar
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                        placeholder="Search languages by name or description..."
+                    />
+                    <div className="mt-4 flex flex-wrap items-center justify-between text-gray-400">
+                        <p>
+                            Showing {paginatedLanguages.length} of {filteredLanguages.length} languages
+                            {searchTerm && (
+                                <span> for "<span className="text-green-400">{searchTerm}</span>"</span>
+                            )}
+                        </p>
+                        {filteredLanguages.length > ITEMS_PER_PAGE && (
+                            <p>Page {currentPage} of {totalPages}</p>
+                        )}
+                    </div>
+                </div>
+
                 {/* Languages Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {Array.isArray(languages) && languages.length > 0 ? (
-                        languages.map((lang) => (
+                    {paginatedLanguages.length > 0 ? (  
+                        paginatedLanguages.map((lang) => ( 
                             <div
                                 key={lang._id}
                                 className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-3xl overflow-hidden shadow-2xl hover:shadow-green-500/20 transition-all duration-500 hover:-translate-y-3 cursor-pointer"
@@ -259,11 +297,31 @@ export default function LanguagesAdmin() {
                     ) : (
                         <div className="col-span-full text-center py-20">
                             <Globe size={100} className="mx-auto text-gray-600 mb-6" />
-                            <h3 className="text-3xl font-bold text-gray-500 mb-3">No languages yet</h3>
-                            <p className="text-gray-400 text-lg">Click "Add New Language" to create your first one!</p>
+                            <h3 className="text-3xl font-bold text-gray-500 mb-3">
+                                {searchTerm ? "No matching languages found" : "No languages yet"}
+                            </h3>
+                            <p className="text-gray-400 text-lg">
+                                {searchTerm ? "Try a different search term" : 'Click "Add New Language" to create your first one!'}
+                            </p>
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm("")}
+                                    className="mt-6 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 rounded-xl font-medium hover:from-green-700 hover:to-blue-700 transition"
+                                >
+                                    Clear Search
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>
+
+                {/* Pagination */}
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    className="mt-12"
+                />
             </div>
 
             {/* Modal */}

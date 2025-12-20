@@ -19,7 +19,7 @@ export default function Leaderboard() {
             <div className="max-w-5xl mx-auto">
 
                 {/* HEADER */}
-                <div className="text-center mb-16">
+                <div className="text-center mb-16  border-b border-gray-700 pb-6">
                     <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                         Global Leaderboard
                     </h1>

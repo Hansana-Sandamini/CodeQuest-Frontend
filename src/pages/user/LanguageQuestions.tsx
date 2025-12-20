@@ -6,6 +6,9 @@ import { ArrowLeft, Code2, CheckSquare, ArrowRight, CheckCircle } from "lucide-r
 import { type Question, Difficulty, QuestionType } from "../../types/Question"
 import { progressApi } from "../../api/progress" 
 import { useState } from "react"
+import { usePagination } from "../../hooks/usePagination"
+import { SearchBar } from "../../components/SearchBar"
+import { Pagination } from "../../components/Pagination"
 
 export default function LanguageQuestions() {
     const { languageId } = useParams<{ languageId: string }>()
@@ -15,8 +18,22 @@ export default function LanguageQuestions() {
     const dispatch = useAppDispatch()
     const { questions, loading, error } = useAppSelector((state) => state.questions)
     
+    const [searchTerm, setSearchTerm] = useState("")
+    const ITEMS_PER_PAGE = 3
     const [completedQuestions, setCompletedQuestions] = useState<Set<string>>(new Set())
-
+    const {
+        currentPage,
+        setCurrentPage,
+        filteredData: filteredQuestions,
+        paginatedData: paginatedQuestions,
+        totalPages,
+    } = usePagination<Question>({
+        data: questions,
+        itemsPerPage: ITEMS_PER_PAGE,
+        searchTerm,
+        searchFields: ['title', 'description'],
+    })
+    
     useEffect(() => {
         if (languageId) {
             dispatch(fetchQuestionsByLanguage({ languageId }))
@@ -87,7 +104,7 @@ export default function LanguageQuestions() {
                 </Link>
 
                 {/* Header */}
-                <div className="text-center mb-16">
+                <div className="text-center mb-16  border-b border-gray-700 pb-6">
                     <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                         {languageName} Quizzes
                     </h1>
@@ -96,18 +113,50 @@ export default function LanguageQuestions() {
                     </p>
                 </div>
 
-                {/* Empty State */}
-                {questions.length === 0 ? (
-                    <div className="text-center py-32">
-                        <div className="text-9xl mb-8 text-gray-800">EMPTY</div>
-                        <p className="text-2xl text-gray-500">
-                            No questions yet for <span className="text-green-400">{languageName}</span>
+                {/* Search Bar */}
+                <div className="mb-8">
+                    <SearchBar
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                        placeholder="Search questions by title or description..."
+                    />
+                    <div className="mt-4 flex flex-wrap items-center justify-between text-gray-400">
+                        <p>
+                            Showing {paginatedQuestions.length} of {filteredQuestions.length} questions
+                            {searchTerm && (
+                                <span> for "<span className="text-green-400">{searchTerm}</span>"</span>
+                            )}
                         </p>
+                        {filteredQuestions.length > ITEMS_PER_PAGE && (
+                            <p>Page {currentPage} of {totalPages}</p>
+                        )}
+                    </div>
+                </div>
+                
+                {/* Empty State */}
+                {paginatedQuestions.length === 0 ? (
+                    <div className="text-center py-32">
+                        <div className="text-8xl mb-8 text-gray-800">
+                            {searchTerm ? "🔍" : "EMPTY"}
+                        </div>
+                        <p className="text-2xl text-gray-500">
+                            {searchTerm ? "No matching questions found" : 
+                                <span> No questions yet for "<span className="text-green-400">{languageName}</span>"</span>
+                            }
+                        </p>
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm("")}
+                                className="mt-6 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 rounded-xl font-medium hover:from-green-700 hover:to-blue-700 transition"
+                            >
+                                Clear Search
+                            </button>
+                        )}
                     </div>
                 ) : (
                     /* Questions Grid */
                     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                    {questions.map((q: Question, index) => {
+                    {paginatedQuestions.map((q: Question, index) => {
                         const isCompleted = completedQuestions.has(q._id)
                         
                         return (
@@ -184,6 +233,14 @@ export default function LanguageQuestions() {
                     })}
                     </div>
                 )}
+
+                {/* Pagination */}
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    className="mt-12"
+                />
             </div>
         </div>
     )

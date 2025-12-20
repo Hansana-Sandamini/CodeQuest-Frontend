@@ -7,6 +7,9 @@ import swal from "../../utils/swal"
 import type { Question } from "../../types/Question"
 import { fetchLanguages } from "../../features/languages/languageActions"
 import { questionApi } from "../../api/question"
+import { usePagination } from "../../hooks/usePagination"
+import { SearchBar } from "../../components/SearchBar"
+import { Pagination } from "../../components/Pagination"
 
 export default function QuestionsByLanguage() {
     const { languageId } = useParams<{ languageId: string }>()
@@ -16,6 +19,21 @@ export default function QuestionsByLanguage() {
     const { questions = [], loading } = useAppSelector((state) => state.questions)
     const languages = useAppSelector((state) => state.languages.items)
     const language = languages.find((l) => l._id === languageId)
+
+    const [searchTerm, setSearchTerm] = useState("")
+    const ITEMS_PER_PAGE = 6
+    const {
+        currentPage,
+        setCurrentPage,
+        filteredData: filteredQuestions,
+        paginatedData: paginatedQuestions,
+        totalPages,
+    } = usePagination<Question>({
+        data: questions,
+        itemsPerPage: ITEMS_PER_PAGE,
+        searchTerm,
+        searchFields: ['title', 'description'],
+    })
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingQuestion, setEditingQuestion] = useState<Question | null>(null)
@@ -222,7 +240,7 @@ export default function QuestionsByLanguage() {
             <div className="max-w-7xl mx-auto">
 
                 {/* Header */}
-                <div className="mb-12">
+                <div className="mb-12  border-b border-gray-700 pb-6">
                     <button
                         onClick={() => navigate("/admin/languages")}
                         className="flex items-center gap-3 text-gray-400 hover:text-white mb-8 transition-all hover:-translate-x-2"
@@ -261,14 +279,34 @@ export default function QuestionsByLanguage() {
                     </div>
                 </div>
 
+                {/* Search Bar */}
+                <div className="mb-8">
+                    <SearchBar
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                        placeholder="Search questions by title or description..."
+                    />
+                    <div className="mt-4 flex flex-wrap items-center justify-between text-gray-400">
+                        <p>
+                            Showing {paginatedQuestions.length} of {filteredQuestions.length} questions
+                            {searchTerm && (
+                                <span> for "<span className="text-green-400">{searchTerm}</span>"</span>
+                            )}
+                        </p>
+                        {filteredQuestions.length > ITEMS_PER_PAGE && (
+                            <p>Page {currentPage} of {totalPages}</p>
+                        )}
+                    </div>
+                </div>
+                
                 {/* Questions Grid */}
                 {loading ? (
                     <div className="text-center py-32">
                         <div className="text-3xl text-gray-400 animate-pulse">Loading questions...</div>
                     </div>
-                ) : questions.length > 0 ? (
+                ) : paginatedQuestions.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {questions.map((q) => (
+                    {paginatedQuestions.map((q) => (
                         <div
                             key={q._id}
                             className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-3xl overflow-hidden shadow-2xl hover:shadow-green-500/30 transition-all duration-500 hover:-translate-y-4"
@@ -310,14 +348,34 @@ export default function QuestionsByLanguage() {
                             </div>
                         </div>
                     ))}
-                    </div>
+                   
+                {/* Pagination */}
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            className="mt-12"
+                        />
+                     </div>
                 ) : (
                     <div className="text-center py-32">
                         <div className="text-7xl mb-8 text-gray-700">?</div>
-                        <h3 className="text-4xl font-bold text-gray-500 mb-4">No questions yet</h3>
+                        <h3 className="text-4xl font-bold text-gray-500 mb-4">
+                            {searchTerm ? "No matching questions found" : "No questions yet"}
+                        </h3>
                         <p className="text-xl text-gray-400">
-                            Be the first to add a question for <span className="text-green-400 font-bold">{language.name}</span>!
+                            {searchTerm ? "Try a different search term" :  
+                                <>Be the first to add a question for <span className="text-green-400 font-bold">{language.name}</span>!</>
+                            }
                         </p>
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm("")}
+                                className="mt-6 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 rounded-xl font-medium hover:from-green-700 hover:to-blue-700 transition"
+                            >
+                                Clear Search
+                            </button>
+                        )}
                     </div>
                 )}
             </div>

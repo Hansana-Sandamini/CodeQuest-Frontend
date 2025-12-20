@@ -204,7 +204,7 @@ const Profile = () => {
         <div className="ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
-                <div className="text-center mb-12">
+                <div className="text-center mb-12  border-b border-gray-700 pb-6">
                     <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                         Your Profile {isAdmin && <span className="text-red-400">(Admin)</span>}
                     </h1>

@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react"
 import { useUsers } from "../../hooks/useUsers"
-import { Search, UserPlus, Trash2, Edit, Save, X } from "lucide-react"
+import { UserPlus, Trash2, Edit, Save, X } from "lucide-react"
 import { Role } from "../../types/User"
+import { usePagination } from "../../hooks/usePagination"
+import { SearchBar } from "../../components/SearchBar"
+import { Pagination } from "../../components/Pagination"
 
 const AdminUsers = () => {
     const { users, loading, error, fetchUsers, updateUserRole, deleteUser } = useUsers()
@@ -9,16 +12,23 @@ const AdminUsers = () => {
     const [editingUserId, setEditingUserId] = useState<string | null>(null)
     const [userRoles, setUserRoles] = useState<Role[]>([])
 
+    const ITEMS_PER_PAGE = 6
+    const {
+        currentPage,
+        setCurrentPage,
+        filteredData: filteredUsers,
+        paginatedData: paginatedUsers,
+        totalPages,
+    } = usePagination({
+        data: users,
+        itemsPerPage: ITEMS_PER_PAGE,
+        searchTerm,
+        searchFields: ['username', 'email', 'firstname', 'lastname'],
+    })
+    
     useEffect(() => {
         fetchUsers()
     }, [])
-
-    const filteredUsers = users.filter(user =>
-        user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.firstname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.lastname?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     const handleEditRoles = (userId: string, currentRoles: Role[]) => {
         setEditingUserId(userId)
@@ -65,7 +75,7 @@ const AdminUsers = () => {
             <div className="max-w-7xl mx-auto">
 
                 {/* Header */}
-                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12">
+                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12  border-b border-gray-700 pb-6">
                     <div>
                         <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                             Manage Users
@@ -78,15 +88,21 @@ const AdminUsers = () => {
 
                 {/* Search Bar */}
                 <div className="mb-8">
-                    <div className="relative">
-                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
-                        <input
-                            type="text"
-                            placeholder="Search users by name, email, or username..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-gray-800/50 border border-gray-700 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-green-500"
-                        />
+                    <SearchBar
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                        placeholder="Search users by name, email, or username..."
+                    />
+                    <div className="mt-4 flex flex-wrap items-center justify-between text-gray-400">
+                        <p>
+                            Showing {paginatedUsers.length} of {filteredUsers.length} users
+                            {searchTerm && (
+                                <span> for "<span className="text-green-400">{searchTerm}</span>"</span>
+                            )}
+                        </p>
+                        {filteredUsers.length > ITEMS_PER_PAGE && (
+                            <p>Page {currentPage} of {totalPages}</p>
+                        )}
                     </div>
                 </div>
 
@@ -111,7 +127,7 @@ const AdminUsers = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredUsers.map((user) => (
+                                {paginatedUsers.map((user) => (
                                     <tr key={user._id} className="border-b border-gray-800 hover:bg-gray-800/30 transition-colors">
                                         <td className="py-4 px-6">
                                             <div className="flex items-center gap-3">
@@ -223,36 +239,38 @@ const AdminUsers = () => {
                             </tbody>
                         </table>
                     </div>
-
+                    
                     {/* Empty State */}
-                    {filteredUsers.length === 0 && (
+                    {paginatedUsers.length === 0 && (
                         <div className="text-center py-16">
                             <UserPlus size={64} className="mx-auto mb-4 text-gray-700" />
-                            <p className="text-xl text-gray-400">No users found</p>
-                            <p className="text-gray-600">Try adjusting your search terms</p>
+                            <p className="text-xl text-gray-400">
+                                {searchTerm ? "No users found matching your search" : "No users found"}
+                            </p>
+                            <p className="text-gray-600">
+                                {searchTerm ? "Try adjusting your search terms" : "No users have registered yet"}
+                            </p>
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm("")}
+                                    className="mt-6 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 rounded-xl font-medium hover:from-green-700 hover:to-blue-700 transition"
+                                >
+                                    Clear Search
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>
 
-                {/* Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                    <div className="bg-gray-800/40 border border-gray-700 rounded-xl p-6">
-                        <p className="text-gray-400 mb-2">Total Users</p>
-                        <p className="text-3xl font-bold text-white">{users.length}</p>
-                    </div>
-                    <div className="bg-gray-800/40 border border-gray-700 rounded-xl p-6">
-                        <p className="text-gray-400 mb-2">Admins</p>
-                        <p className="text-3xl font-bold text-red-400">
-                            {users.filter(u => u.roles.includes(Role.ADMIN)).length}
-                        </p>
-                    </div>
-                    <div className="bg-gray-800/40 border border-gray-700 rounded-xl p-6">
-                        <p className="text-gray-400 mb-2">Regular Users</p>
-                        <p className="text-3xl font-bold text-blue-400">
-                            {users.filter(u => u.roles.includes(Role.USER)).length}
-                        </p>
-                    </div>
-                </div>
+                {/* Pagination */}
+                {paginatedUsers.length > 0 && (
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        className="mt-8"
+                    />
+                )}
             </div>
         </div>
     )
