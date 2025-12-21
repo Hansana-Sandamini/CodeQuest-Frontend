@@ -16,12 +16,12 @@ const Home = () => {
             <Features />
 
             {/* About Section */}
-            <section id="about" className="py-24">
+            <section id="about" className="py-12 sm:py-16 md:py-20 lg:py-24">
                 <About />
             </section>
 
             {/* Contact Section */}
-            <section id="contact" className="py-24">
+            <section id="contact" className="py-12 sm:py-16 md:py-20 lg:py-24">
                 <Contact />
             </section>
 

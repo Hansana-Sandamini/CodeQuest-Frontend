@@ -2,27 +2,27 @@ import { Link } from "react-router-dom"
 
 const HomeFooter = () => {
     return (
-        <footer className="bg-gray-900/50 border-t border-gray-800 py-16 mt-24">
-            <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10 text-center md:text-left">
+        <footer className="bg-gray-900/50 border-t border-gray-800 py-12 sm:py-16 mt-12 sm:mt-16 md:mt-20 lg:mt-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8 md:gap-10 text-center md:text-left">
 
                 {/* Logo + Description */}
                 <div>
                     <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                        <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-blue-500 rounded-xl flex items-center justify-center">
-                            <span className="text-2xl font-bold">⚡</span>
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-600 to-blue-500 rounded-xl flex items-center justify-center">
+                            <span className="text-xl sm:text-2xl font-bold">⚡</span>
                         </div>
-                        <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                        <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                             CodeQuest
                         </span>
                     </div>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-400 text-xs sm:text-sm">
                     Level up your coding skills through epic challenges and real projects.
                     </p>
                 </div>
 
                 <div>
-                    <h3 className="font-semibold text-white mb-4">Quick Links</h3>
-                    <ul className="space-y-2 text-gray-400 text-sm">
+                    <h3 className="font-semibold text-white mb-3 sm:mb-4 text-sm sm:text-base">Quick Links</h3>
+                    <ul className="space-y-2 text-gray-400 text-xs sm:text-sm">
                         <li><Link to="/quests" className="hover:text-green-400 transition">Quests</Link></li>
                         <li><Link to="/leaderboard" className="hover:text-green-400 transition">Leaderboard</Link></li>
                         <li><Link to="/about" className="hover:text-green-400 transition">About</Link></li>
@@ -30,8 +30,8 @@ const HomeFooter = () => {
                 </div>
 
                 <div>
-                    <h3 className="font-semibold text-white mb-4">Community</h3>
-                    <ul className="space-y-2 text-gray-400 text-sm">
+                    <h3 className="font-semibold text-white mb-3 sm:mb-4 text-sm sm:text-base">Community</h3>
+                    <ul className="space-y-2 text-gray-400 text-xs sm:text-sm">
                         <li><a href="#" className="hover:text-green-400 transition">Discord</a></li>
                         <li><a href="#" className="hover:text-green-400 transition">Twitter</a></li>
                         <li><a href="#" className="hover:text-green-400 transition">GitHub</a></li>
@@ -39,17 +39,17 @@ const HomeFooter = () => {
                 </div>
 
                 <div>
-                    <h3 className="font-semibold text-white mb-4">Stay Updated</h3>
-                    <p className="text-gray-400 text-sm mb-4">
+                    <h3 className="font-semibold text-white mb-3 sm:mb-4 text-sm sm:text-base">Stay Updated</h3>
+                    <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4">
                         Get the latest quests in your inbox.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-3 max-w-xs mx-auto md:mx-0">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 max-w-xs mx-auto md:mx-0">
                         <input
                             type="email"
                             placeholder="Your email"
-                            className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:border-green-500 focus:outline-none text-sm"
+                            className="flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gray-800 border border-gray-700 rounded-xl focus:border-green-500 focus:outline-none text-xs sm:text-sm"
                         />
-                        <button className="px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-xl font-medium transition text-sm">
+                        <button className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-xl font-medium transition text-xs sm:text-sm">
                             Subscribe
                         </button>
                     </div>
@@ -58,7 +58,7 @@ const HomeFooter = () => {
             </div>
 
             {/* Bottom copyright */}
-            <div className="mt-12 text-center text-gray-500 text-sm border-t border-gray-800 pt-8">
+            <div className="mt-8 sm:mt-12 text-center text-gray-500 text-xs sm:text-sm border-t border-gray-800 pt-6 sm:pt-8">
                 © {new Date().getFullYear()} CodeQuest. Made with ❤️ and lots of Lightning
             </div>
         </footer>

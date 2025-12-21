@@ -24,10 +24,10 @@ const Button = ({
             className={`
                 w-full bg-gradient-to-r from-green-600 to-blue-600 
                 hover:from-green-700 hover:to-blue-700 
-                text-white font-semibold py-4 rounded-xl 
+                text-white font-semibold py-3 sm:py-4 rounded-xl 
                 transition-all duration-300 transform hover:scale-105 
                 shadow-lg hover:shadow-green-500/25 disabled:opacity-50 
-                disabled:cursor-not-allowed"
+                disabled:cursor-not-allowed text-sm sm:text-base
                 ${className}
             `}
         >

@@ -8,6 +8,7 @@ import swal from "../utils/swal"
 import type { IBadge, ICertificate } from "../types/User"
 import { Link } from "react-router-dom"
 import PasswordInput from "../components/PasswordInput"
+import Avatar from "../components/Avatar"
 
 const Profile = () => {
     const { user, isAdmin } = useAuth()
@@ -201,7 +202,7 @@ const Profile = () => {
     }
 
     return (
-        <div className="ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
+        <div className="lg:ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-8 lg:py-20 px-4 lg:px-8">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-12  border-b border-gray-700 pb-6">
@@ -222,19 +223,17 @@ const Profile = () => {
                         <div className="backdrop-blur-sm bg-gray-800/40 border border-gray-700 rounded-2xl p-8">
                             <div className="flex items-center gap-6 mb-8">
                                 <div className="relative">
-                                    {user?.profilePicture ? (
-                                        <img
-                                            src={user.profilePicture}
-                                            alt={user.username}
-                                            className="w-24 h-24 rounded-full object-cover ring-4 ring-green-500/50"
-                                        />
-                                    ) : (
-                                        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center font-bold text-3xl text-white">
-                                            {user?.username?.[0]?.toUpperCase()}
-                                        </div>
-                                    )}
-                                    <label className="absolute bottom-0 right-0 bg-gray-800 p-2 rounded-full cursor-pointer hover:bg-gray-700 transition-colors">
-                                        <Camera size={20} />
+                                    <Avatar 
+                                        src={user.profilePicture}
+                                        username={user.username}
+                                        size="lg"
+                                        ring
+                                    />
+                                    <label className="
+                                        absolute -bottom-3 -right-3 bg-gray-800 hover:bg-gray-700 p-2 rounded-full cursor-pointer transition-colors border border-gray-600
+                                        group-hover:scale-110 transform transition-transform
+                                    ">
+                                        <Camera size={16} className="text-gray-300" />
                                         <input
                                             type="file"
                                             accept="image/*"

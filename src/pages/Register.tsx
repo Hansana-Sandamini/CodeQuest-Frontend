@@ -51,20 +51,20 @@ const Register = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-4">
             <div className="w-full max-w-2xl">
-                <div className="bg-gray-800/30 backdrop-blur-sm rounded-3xl border border-gray-700 shadow-2xl p-8">
+                <div className="bg-gray-800/30 backdrop-blur-sm rounded-3xl border border-gray-700 shadow-2xl p-4 sm:p-6 md:p-8">
 
                     {/* Header */}
-                    <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                            <span className="text-2xl">🚀</span>
+                    <div className="text-center mb-6 md:mb-8">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl mx-auto mb-3 md:mb-4 flex items-center justify-center">
+                            <span className="text-xl sm:text-2xl">🚀</span>
                         </div>
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                             Join CodeQuest
                         </h1>
-                        <p className="text-gray-400 mt-2">Start your coding adventure today</p>
+                        <p className="text-gray-400 mt-2 text-sm sm:text-base">Start your coding adventure today</p>
                     </div>
 
-                    <form onSubmit={submitHandler} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <form onSubmit={submitHandler} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 
                         {/* Form Fields for non-password inputs */}
                         {[
@@ -78,7 +78,7 @@ const Register = () => {
                                     type={type}
                                     name={key}
                                     placeholder={label}
-                                    className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                                    className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 sm:py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base"
                                     value={(formData as any)[key]}
                                     onChange={handleChange}
                                     required
@@ -99,8 +99,8 @@ const Register = () => {
 
                         {/* Profile Picture Upload */}
                         <div className="md:col-span-2">
-                            <label className="block text-gray-300 mb-3 font-medium">Profile Picture (Optional)</label>
-                            <div className="border-2 border-dashed border-gray-600 rounded-2xl p-6 text-center hover:border-green-500 transition-all cursor-pointer">
+                            <label className="block text-gray-300 mb-2 sm:mb-3 font-medium text-sm sm:text-base">Profile Picture (Optional)</label>
+                            <div className="border-2 border-dashed border-gray-600 rounded-2xl p-4 sm:p-6 text-center hover:border-green-500 transition-all cursor-pointer">
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -109,26 +109,26 @@ const Register = () => {
                                     id="profilePicture"
                                 />
                                 <label htmlFor="profilePicture" className="cursor-pointer">
-                                    <div className="text-3xl mb-2">📷</div>
-                                    <p className="text-gray-400">
+                                    <div className="text-2xl sm:text-3xl mb-2">📷</div>
+                                    <p className="text-gray-400 text-sm sm:text-base">
                                         {profilePicture ? profilePicture.name : "Click to upload profile picture"}
                                     </p>
-                                    <p className="text-sm text-gray-500 mt-1">PNG, JPG, JPEG (Max 5MB)</p>
+                                    <p className="text-xs sm:text-sm text-gray-500 mt-1">PNG, JPG, JPEG (Max 5MB)</p>
                                 </label>
                             </div>
                         </div>
 
                         {/* Submit Button */}
                         <div className="md:col-span-2">
-                            <Button type="submit" className="w-full">
+                            <Button type="submit" className="w-full py-3 sm:py-4 text-sm sm:text-base">
                                 Start Your Journey
                             </Button>
                         </div>
                     </form>
 
                     {/* Footer Link */}
-                    <div className="mt-8 text-center">
-                        <p className="text-gray-400">
+                    <div className="mt-6 md:mt-8 text-center">
+                        <p className="text-gray-400 text-sm sm:text-base">
                             Already have an account?{" "}
                             <Link
                                 to="/login"

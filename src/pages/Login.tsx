@@ -107,26 +107,26 @@ const Login = () => {
 
             {isAuthenticated && <RoleBasedRedirect />}
             <div className="w-full max-w-md">
-                <div className="bg-gray-800/30 backdrop-blur-sm rounded-3xl border border-gray-700 shadow-2xl p-8">
+                <div className="bg-gray-800/30 backdrop-blur-sm rounded-3xl border border-gray-700 shadow-2xl p-4 sm:p-6 md:p-8">
 
                     {/* Header */}
-                    <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                            <span className="text-2xl">🔐</span>
+                    <div className="text-center mb-6 md:mb-8">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl mx-auto mb-3 md:mb-4 flex items-center justify-center">
+                            <span className="text-xl sm:text-2xl">🔐</span>
                         </div>
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                             Welcome Back
                         </h1>
-                        <p className="text-gray-400 mt-2">Sign in to continue your journey</p>
+                        <p className="text-gray-400 mt-2 text-sm sm:text-base">Sign in to continue your journey</p>
                     </div>
 
                     {/* Form */}
-                    <form onSubmit={submitHandler} className="space-y-6">
+                    <form onSubmit={submitHandler} className="space-y-4 sm:space-y-6">
                         <div>
                             <input
                                 type="email"
                                 placeholder="Enter your email"
-                                className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                                className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 sm:py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
@@ -144,7 +144,7 @@ const Login = () => {
                         </div>
 
                         <div className="flex items-center justify-between">
-                            <div className="text-sm">
+                            <div className="text-sm sm:text-base">
                                 <button
                                     type="button"
                                     onClick={openForgotPasswordModal}
@@ -155,14 +155,14 @@ const Login = () => {
                             </div>
                         </div>
 
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" className="w-full py-3 sm:py-4 text-sm sm:text-base">
                             Sign In
                         </Button>
                     </form>
 
                     {/* Footer Link */}
-                    <div className="mt-8 text-center">
-                        <p className="text-gray-400">
+                    <div className="mt-6 md:mt-8 text-center">
+                        <p className="text-gray-400 text-sm sm:text-base">
                             Don't have an account?{" "}
                             <Link
                                 to="/register"
@@ -180,24 +180,24 @@ const Login = () => {
             {showForgotModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/70" onClick={() => setShowForgotModal(false)}></div>
-                    <div className="relative w-full max-w-md bg-gray-800 rounded-3xl shadow-2xl p-8">
-                        <h2 className="text-2xl font-bold text-white text-center mb-4">Forgot Password?</h2>
-                        <p className="text-gray-400 text-center mb-6">We'll send a 6-digit code to your email</p>
+                    <div className="relative w-full max-w-md bg-gray-800 rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8">
+                        <h2 className="text-xl sm:text-2xl font-bold text-white text-center mb-4">Forgot Password?</h2>
+                        <p className="text-gray-400 text-center mb-4 sm:mb-6 text-sm sm:text-base">We'll send a 6-digit code to your email</p>
                         <input
                             type="email"
                             placeholder="Your email address"
                             value={forgotEmail}
                             onChange={(e) => setForgotEmail(e.target.value)}
-                            className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                            className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 sm:py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition text-sm sm:text-base"
                             autoFocus
                         />
-                        <div className="flex gap-4 mt-8">
-                            <Button onClick={handleSendCode} isLoading={isLoading} className="flex-1 px-8 py-3">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
+                            <Button onClick={handleSendCode} isLoading={isLoading} className="flex-1 px-4 sm:px-8 py-3 text-sm sm:text-base">
                                 Send Code
                             </Button>
                             <button
                                 onClick={() => setShowForgotModal(false)}
-                                className="flex-1 px-8 py-3 rounded-xl font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 transition"
+                                className="flex-1 px-4 sm:px-8 py-3 rounded-xl font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 transition text-sm sm:text-base"
                             >
                                 Cancel
                             </button>
@@ -210,9 +210,9 @@ const Login = () => {
             {showOtpModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/70" onClick={() => setShowOtpModal(false)}></div>
-                    <div className="relative w-full max-w-md bg-gray-800 rounded-3xl shadow-2xl p-8">
-                        <h2 className="text-2xl font-bold text-white text-center mb-4">Enter Verification Code</h2>
-                        <p className="text-gray-400 text-sm text-center mb-6">
+                    <div className="relative w-full max-w-md bg-gray-800 rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8">
+                        <h2 className="text-xl sm:text-2xl font-bold text-white text-center mb-4">Enter Verification Code</h2>
+                        <p className="text-gray-400 text-xs sm:text-sm text-center mb-4 sm:mb-6">
                             We sent a 6-digit code to <strong>{forgotEmail}</strong>
                         </p>
                         <input
@@ -221,7 +221,7 @@ const Login = () => {
                             value={otp}
                             onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                             maxLength={6}
-                            className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-4 text-white placeholder-gray-400 text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                            className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 sm:py-4 text-white placeholder-gray-400 text-center text-xl sm:text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-green-500 transition"
                         />
 
                          <div className="mt-4">
@@ -244,13 +244,13 @@ const Login = () => {
                             />
                         </div>
 
-                        <div className="flex gap-4 mt-8">
-                            <Button onClick={handleResetPassword} isLoading={isLoading} className="flex-1 px-8 py-3">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
+                            <Button onClick={handleResetPassword} isLoading={isLoading} className="flex-1 px-4 sm:px-8 py-3 text-sm sm:text-base">
                                 Reset Password
                             </Button>
                             <button
                                 onClick={() => setShowOtpModal(false)}
-                                className="flex-1 px-8 py-3 rounded-xl font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 transition"
+                                className="flex-1 px-4 sm:px-8 py-3 rounded-xl font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 transition text-sm sm:text-base"
                             >
                                 Cancel
                             </button>

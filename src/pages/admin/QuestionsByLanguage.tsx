@@ -8,10 +8,10 @@ import type { Question } from "../../types/Question"
 import { fetchLanguages } from "../../features/languages/languageActions"
 import { questionApi } from "../../api/question"
 import { usePagination } from "../../hooks/usePagination"
-import { SearchBar } from "../../components/SearchBar"
-import { Pagination } from "../../components/Pagination"
+import SearchBar from "../../components/SearchBar"
+import Pagination from "../../components/Pagination"
 
-export default function QuestionsByLanguage() {
+const QuestionsByLanguage = () => {
     const { languageId } = useParams<{ languageId: string }>()
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
@@ -195,8 +195,8 @@ export default function QuestionsByLanguage() {
             cancelButtonText: "Cancel",
             reverseButtons: true,
             customClass: {
-                confirmButton: "px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 shadow-lg transition-all",
-                cancelButton: "px-8 py-3 rounded-xl font-semibold text-white bg-gray-700 hover:bg-gray-600 mr-4 transition-all",
+                confirmButton: "px-4 lg:px-8 py-2 lg:py-3 rounded-lg lg:rounded-xl font-semibold text-white bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 shadow-lg transition-all",
+                cancelButton: "px-4 lg:px-8 py-2 lg:py-3 rounded-lg lg:rounded-xl font-semibold text-white bg-gray-700 hover:bg-gray-600 mr-2 lg:mr-4 transition-all",
             },
             buttonsStyling: false,
         })
@@ -229,41 +229,45 @@ export default function QuestionsByLanguage() {
 
     if (!language) {
         return (
-            <div className="flex items-center justify-center min-h-screen text-3xl text-red-400">
+            <div className="flex items-center justify-center min-h-screen text-xl lg:text-2xl xl:text-3xl text-red-400 px-4">
                 Language not found
             </div>
         )
     }
 
     return (
-        <div className="ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
+        <div className="lg:ml-64 lg:ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-8 lg:py-16 xl:py-20 px-3 lg:px-6 xl:px-8">
             <div className="max-w-7xl mx-auto">
 
                 {/* Header */}
-                <div className="mb-12  border-b border-gray-700 pb-6">
+                <div className="mb-6 lg:mb-10 xl:mb-12 border-b border-gray-700 pb-4 lg:pb-6">
                     <button
                         onClick={() => navigate("/admin/languages")}
-                        className="flex items-center gap-3 text-gray-400 hover:text-white mb-8 transition-all hover:-translate-x-2"
+                        className="flex items-center gap-2 lg:gap-3 text-gray-400 hover:text-white mb-4 lg:mb-6 transition-all hover:-translate-x-1 lg:hover:-translate-x-2 text-sm lg:text-base"
                     >
-                        <ArrowLeft size={28} />
-                        <span className="text-lg">Back to Languages</span>
+                        <ArrowLeft className="w-5 h-5 lg:w-6 lg:h-6" />
+                        <span>Back to Languages</span>
                     </button>
 
-                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
-                        <div className="flex items-center gap-8">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 lg:gap-6 xl:gap-8">
+                        <div className="flex items-center gap-4 lg:gap-6 xl:gap-8">
                             {language.iconUrl ? (
-                                <img src={language.iconUrl} alt={language.name} className="w-24 h-24 rounded-3xl shadow-2xl border-4 border-gray-800 object-cover" />
+                                <img 
+                                    src={language.iconUrl} 
+                                    alt={language.name} 
+                                    className="w-16 h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 rounded-xl lg:rounded-2xl xl:rounded-3xl shadow-lg lg:shadow-xl xl:shadow-2xl border-4 border-gray-800 object-cover" 
+                                />
                             ) : (
-                                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                                    <Globe size={48} className="text-white/30" />
+                                <div className="w-16 h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 rounded-xl lg:rounded-2xl xl:rounded-3xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
+                                    <Globe className="w-8 h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 text-white/30" />
                                 </div>
                             )}
 
                             <div>
-                                <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                                <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                                     {language.name}
                                 </h1>
-                                <p className="text-2xl text-gray-400 mt-3">
+                                <p className="text-lg lg:text-xl xl:text-2xl text-gray-400 mt-1 lg:mt-2 xl:mt-3">
                                     {questions.length} question{questions.length !== 1 ? "s" : ""}
                                 </p>
                             </div>
@@ -271,22 +275,23 @@ export default function QuestionsByLanguage() {
 
                         <button
                             onClick={() => openModal()}
-                            className="flex items-center gap-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105"
+                            className="flex items-center justify-center gap-2 lg:gap-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-4 lg:px-6 xl:px-8 py-2.5 lg:py-3 xl:py-4 rounded-lg lg:rounded-xl font-bold text-sm lg:text-base xl:text-lg shadow-lg hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105 w-full lg:w-auto mt-4 lg:mt-0"
                         >
-                            <Plus size={32} />
+                            <Plus className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" />
                             Add New Question
                         </button>
                     </div>
                 </div>
 
                 {/* Search Bar */}
-                <div className="mb-8">
+                <div className="mb-6 lg:mb-8">
                     <SearchBar
                         searchTerm={searchTerm}
                         onSearchChange={setSearchTerm}
                         placeholder="Search questions by title or description..."
+                        className="w-full"
                     />
-                    <div className="mt-4 flex flex-wrap items-center justify-between text-gray-400">
+                    <div className="mt-3 lg:mt-4 flex flex-wrap items-center justify-between text-gray-400 text-xs lg:text-sm xl:text-base">
                         <p>
                             Showing {paginatedQuestions.length} of {filteredQuestions.length} questions
                             {searchTerm && (
@@ -294,76 +299,78 @@ export default function QuestionsByLanguage() {
                             )}
                         </p>
                         {filteredQuestions.length > ITEMS_PER_PAGE && (
-                            <p>Page {currentPage} of {totalPages}</p>
+                            <p className="mt-1 lg:mt-0">Page {currentPage} of {totalPages}</p>
                         )}
                     </div>
                 </div>
                 
                 {/* Questions Grid */}
                 {loading ? (
-                    <div className="text-center py-32">
-                        <div className="text-3xl text-gray-400 animate-pulse">Loading questions...</div>
+                    <div className="text-center py-16 lg:py-24 xl:py-32">
+                        <div className="text-xl lg:text-2xl xl:text-3xl text-gray-400 animate-pulse">Loading questions...</div>
                     </div>
                 ) : paginatedQuestions.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {paginatedQuestions.map((q) => (
-                        <div
-                            key={q._id}
-                            className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-3xl overflow-hidden shadow-2xl hover:shadow-green-500/30 transition-all duration-500 hover:-translate-y-4"
-                        >
-                            <div className="absolute top-4 left-4 z-10">
-                                <span className={`px-4 py-2 rounded-full text-sm font-bold ${
-                                    q.difficulty === "EASY" ? "bg-green-500/20 text-green-400 border border-green-500/40" :
-                                    q.difficulty === "MEDIUM" ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/40" :
-                                    "bg-red-500/20 text-red-400 border border-red-500/40"
-                                }`}>
-                                    {q.difficulty}
-                                </span>
-                            </div>
-                            <div className="absolute top-4 right-4 z-10">
-                                <span className={`px-4 py-2 rounded-full text-sm font-bold ${q.type === "MCQ" ? "bg-purple-500/20 text-purple-400 border border-purple-500/40" : "bg-cyan-500/20 text-cyan-400 border border-cyan-500/40"}`}>
-                                    {q.type === "CODING" && <Code2 className="inline mr-1" size={16} />}
-                                    {q.type}
-                                </span>
-                            </div>
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 xl:gap-8">
+                            {paginatedQuestions.map((q) => (
+                                <div
+                                    key={q._id}
+                                    className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl lg:rounded-2xl xl:rounded-3xl overflow-hidden shadow-lg lg:shadow-xl xl:shadow-2xl hover:shadow-green-500/30 transition-all duration-500 hover:-translate-y-2 lg:hover:-translate-y-3 xl:hover:-translate-y-4"
+                                >
+                                    <div className="absolute top-2 lg:top-3 xl:top-4 left-2 lg:left-3 xl:left-4 z-10">
+                                        <span className={`px-2 lg:px-3 xl:px-4 py-1 lg:py-1.5 xl:py-2 rounded-full text-xs lg:text-sm font-bold ${
+                                            q.difficulty === "EASY" ? "bg-green-500/20 text-green-400 border border-green-500/40" :
+                                            q.difficulty === "MEDIUM" ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/40" :
+                                            "bg-red-500/20 text-red-400 border border-red-500/40"
+                                        }`}>
+                                            {q.difficulty}
+                                        </span>
+                                    </div>
+                                    <div className="absolute top-2 lg:top-3 xl:top-4 right-2 lg:right-3 xl:right-4 z-10">
+                                        <span className={`px-2 lg:px-3 xl:px-4 py-1 lg:py-1.5 xl:py-2 rounded-full text-xs lg:text-sm font-bold ${q.type === "MCQ" ? "bg-purple-500/20 text-purple-400 border border-purple-500/40" : "bg-cyan-500/20 text-cyan-400 border border-cyan-500/40"}`}>
+                                            {q.type === "CODING" && <Code2 className="inline mr-1 w-3 h-3 lg:w-4 lg:h-4" />}
+                                            {q.type}
+                                        </span>
+                                    </div>
 
-                            <div className="p-8">
-                                <h3 className="text-2xl font-bold text-white mb-4 line-clamp-2">{q.title}</h3>
-                                <p className="text-gray-400 text-sm line-clamp-3 mb-8">{q.description || "No description"}</p>
+                                    <div className="p-4 lg:p-6 xl:p-8">
+                                        <h3 className="text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold text-white mb-2 lg:mb-3 xl:mb-4 line-clamp-2">{q.title}</h3>
+                                        <p className="text-gray-400 text-xs lg:text-sm line-clamp-3 mb-4 lg:mb-6 xl:mb-8">{q.description || "No description"}</p>
 
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={() => openModal(q)}
-                                        className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-4 rounded-xl font-bold transition-all shadow-lg"
-                                    >
-                                        <Edit2 size={20} /> Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(q._id)}
-                                        className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 py-4 rounded-xl font-bold transition-all shadow-lg"
-                                    >
-                                        <Trash2 size={20} /> Delete
-                                    </button>
+                                        <div className="flex gap-2 lg:gap-3">
+                                            <button
+                                                onClick={() => openModal(q)}
+                                                className="flex-1 flex items-center justify-center gap-1 lg:gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-2 lg:py-3 xl:py-4 rounded-lg lg:rounded-xl font-bold text-xs lg:text-sm xl:text-base transition-all shadow-lg"
+                                            >
+                                                <Edit2 className="w-3 h-3 lg:w-4 lg:h-4" /> Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(q._id)}
+                                                className="flex-1 flex items-center justify-center gap-1 lg:gap-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 py-2 lg:py-3 xl:py-4 rounded-lg lg:rounded-xl font-bold text-xs lg:text-sm xl:text-base transition-all shadow-lg"
+                                            >
+                                                <Trash2 className="w-3 h-3 lg:w-4 lg:h-4" /> Delete
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
-                    ))}
-                   
-                {/* Pagination */}
+                        
+                        {/* Pagination */}
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onPageChange={setCurrentPage}
-                            className="mt-12"
+                            className="mt-6 lg:mt-8 xl:mt-10 2xl:mt-12"
                         />
-                     </div>
+                    </>
                 ) : (
-                    <div className="text-center py-32">
-                        <div className="text-7xl mb-8 text-gray-700">?</div>
-                        <h3 className="text-4xl font-bold text-gray-500 mb-4">
+                    <div className="text-center py-16 lg:py-24 xl:py-32">
+                        <div className="text-4xl lg:text-6xl xl:text-7xl mb-4 lg:mb-6 xl:mb-8 text-gray-700">?</div>
+                        <h3 className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold text-gray-500 mb-2 lg:mb-3 xl:mb-4">
                             {searchTerm ? "No matching questions found" : "No questions yet"}
                         </h3>
-                        <p className="text-xl text-gray-400">
+                        <p className="text-gray-400 text-sm lg:text-base xl:text-lg 2xl:text-xl">
                             {searchTerm ? "Try a different search term" :  
                                 <>Be the first to add a question for <span className="text-green-400 font-bold">{language.name}</span>!</>
                             }
@@ -371,7 +378,7 @@ export default function QuestionsByLanguage() {
                         {searchTerm && (
                             <button
                                 onClick={() => setSearchTerm("")}
-                                className="mt-6 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 rounded-xl font-medium hover:from-green-700 hover:to-blue-700 transition"
+                                className="mt-4 lg:mt-6 px-4 lg:px-6 py-2 lg:py-3 bg-gradient-to-r from-green-600 to-blue-600 rounded-lg lg:rounded-xl font-medium text-sm lg:text-base hover:from-green-700 hover:to-blue-700 transition"
                             >
                                 Clear Search
                             </button>
@@ -382,45 +389,45 @@ export default function QuestionsByLanguage() {
 
             {/* MODAL */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-                    <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-3xl shadow-2xl max-w-4xl w-full my-8 p-10 relative max-h-screen overflow-y-auto">
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-2 lg:p-4 overflow-y-auto">
+                    <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-lg lg:rounded-xl xl:rounded-2xl 2xl:rounded-3xl shadow-2xl max-w-[95vw] lg:max-w-4xl w-full my-4 lg:my-8 p-4 lg:p-6 xl:p-8 relative max-h-screen overflow-y-auto mx-2">
                         <button
                             onClick={closeModal}
-                            className="absolute top-6 right-6 text-gray-400 hover:text-white transition"
+                            className="absolute top-3 lg:top-4 xl:top-6 right-3 lg:right-4 xl:right-6 text-gray-400 hover:text-white transition"
                         >
-                            <X size={32} />
+                            <X className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" />
                         </button>
 
-                        <h2 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-10">
+                        <h2 className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-4 lg:mb-6 xl:mb-8">
                             {editingQuestion ? "Edit" : "Add New"} Question — {language.name}
                         </h2>
 
-                        <form onSubmit={handleSubmit} className="space-y-8">
+                        <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6 xl:space-y-8">
 
                             <div>
-                                <label className="block text-lg font-medium text-gray-300 mb-3">Title <span className="text-red-500">*</span></label>
+                                <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-1 lg:mb-2 xl:mb-3">Title <span className="text-red-500">*</span></label>
                                 <input
                                     required
                                     value={form.title}
                                     onChange={(e) => setForm({ ...form, title: e.target.value })}
-                                    className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-6 py-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    className="w-full bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500 text-sm lg:text-base"
                                     placeholder="e.g. What is hoisting in JavaScript?"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-lg font-medium text-gray-300 mb-3">Description (optional)</label>
+                                <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-1 lg:mb-2 xl:mb-3">Description (optional)</label>
                                 <textarea
-                                    rows={5}
+                                    rows={3}
                                     value={form.description}
                                     onChange={(e) => setForm({ ...form, description: e.target.value })}
-                                    className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-6 py-4 text-white resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    className="w-full bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-white resize-none focus:outline-none focus:ring-2 focus:ring-green-500 text-sm lg:text-base"
                                 />
                             </div>
 
-                            <div className="grid md:grid-cols-2 gap-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 xl:gap-8">
                                 <div>
-                                    <label className="block text-lg font-medium text-gray-300 mb-3">Type</label>
+                                    <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-1 lg:mb-2 xl:mb-3">Type</label>
                                     <select
                                         value={form.type}
                                         onChange={(e) => {
@@ -432,7 +439,7 @@ export default function QuestionsByLanguage() {
                                             testCases: type === "CODING" ? form.testCases : [],
                                             })
                                         }}
-                                        className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-6 py-4"
+                                        className="w-full bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-sm lg:text-base"
                                     >
                                         <option value="MCQ">Multiple Choice</option>
                                         <option value="CODING">Coding Challenge</option>
@@ -440,11 +447,11 @@ export default function QuestionsByLanguage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-lg font-medium text-gray-300 mb-3">Difficulty</label>
+                                    <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-1 lg:mb-2 xl:mb-3">Difficulty</label>
                                     <select
                                         value={form.difficulty}
                                         onChange={(e) => setForm({ ...form, difficulty: e.target.value as any })}
-                                        className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-6 py-4"
+                                        className="w-full bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-sm lg:text-base"
                                     >
                                         <option value="EASY">Easy</option>
                                         <option value="MEDIUM">Medium</option>
@@ -456,9 +463,9 @@ export default function QuestionsByLanguage() {
                             {/* MCQ Options */}
                             {form.type === "MCQ" && (
                                 <div>
-                                    <label className="block text-lg font-medium text-gray-300 mb-4">Options</label>
+                                    <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-2 lg:mb-3 xl:mb-4">Options</label>
                                     {form.options.map((opt, i) => (
-                                        <div key={i} className="flex gap-4 mb-4 items-center">
+                                        <div key={i} className="flex gap-2 lg:gap-3 xl:gap-4 mb-2 lg:mb-3 xl:mb-4 items-center">
                                             <input
                                                 type="text"
                                                 value={opt}
@@ -467,7 +474,7 @@ export default function QuestionsByLanguage() {
                                                     opts[i] = e.target.value
                                                     setForm({ ...form, options: opts })
                                                 }}
-                                                className="flex-1 bg-gray-700/50 border border-gray-600 rounded-xl px-6 py-4"
+                                                className="flex-1 bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 text-sm lg:text-base"
                                                 placeholder={`Option ${i + 1}`}
                                             />
                                             {form.options.length > 2 && (
@@ -483,7 +490,7 @@ export default function QuestionsByLanguage() {
                                                     }}
                                                     className="text-red-400 hover:text-red-300"
                                                 >
-                                                    <Trash2 size={24} />
+                                                    <Trash2 className="w-4 h-4 lg:w-5 lg:h-5" />
                                                 </button>
                                             )}
                                         </div>
@@ -492,17 +499,17 @@ export default function QuestionsByLanguage() {
                                     <button
                                         type="button"
                                         onClick={() => setForm({ ...form, options: [...form.options, ""] })}
-                                        className="text-green-400 flex items-center gap-2 hover:underline"
+                                        className="text-green-400 flex items-center gap-1 lg:gap-2 hover:underline text-sm lg:text-base"
                                     >
-                                        <Plus size={24} /> Add Option
+                                        <Plus className="w-4 h-4 lg:w-5 lg:h-5" /> Add Option
                                     </button>
 
-                                    <div className="mt-6">
-                                        <label className="block text-lg font-medium text-gray-300 mb-3">Correct Answer</label>
+                                    <div className="mt-4 lg:mt-6">
+                                        <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-1 lg:mb-2 xl:mb-3">Correct Answer</label>
                                         <select
                                             value={form.correctAnswer}
                                             onChange={(e) => setForm({ ...form, correctAnswer: +e.target.value })}
-                                            className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-6 py-4"
+                                            className="w-full bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-sm lg:text-base"
                                         >
                                             {form.options.map((opt, i) => (
                                                 <option key={i} value={i}>
@@ -517,15 +524,15 @@ export default function QuestionsByLanguage() {
                             {/* CODING Test Cases */}
                             {form.type === "CODING" && (
                                 <div>
-                                    <label className="block text-lg font-medium text-gray-300 mb-4">
+                                    <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-2 lg:mb-3 xl:mb-4">
                                         Test Cases
                                     </label>
                                     {form.testCases.length === 0 && (
-                                        <p className="text-gray-500 mb-4">No test cases yet. Add one below.</p>
+                                        <p className="text-gray-500 mb-2 lg:mb-3 xl:mb-4 text-sm lg:text-base">No test cases yet. Add one below.</p>
                                     )}
                                     {form.testCases.map((tc, i) => (
-                                        <div key={i} className="flex gap-4 mb-4 items-start">
-                                            <div className="flex-1 grid grid-cols-2 gap-4">
+                                        <div key={i} className="flex gap-2 lg:gap-3 xl:gap-4 mb-2 lg:mb-3 xl:mb-4 items-start">
+                                            <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-3 xl:gap-4">
                                                 <textarea
                                                     value={tc.input}
                                                     onChange={(e) => {
@@ -534,8 +541,8 @@ export default function QuestionsByLanguage() {
                                                         setForm({ ...form, testCases: newCases })
                                                     }}
                                                     placeholder="Input"
-                                                    className="bg-gray-700/50 border border-gray-600 rounded-xl px-6 py-4 resize-none"
-                                                    rows={3}
+                                                    className="bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 resize-none text-sm lg:text-base"
+                                                    rows={2}
                                                 />
                                                 <textarea
                                                     value={tc.expectedOutput}
@@ -545,16 +552,16 @@ export default function QuestionsByLanguage() {
                                                         setForm({ ...form, testCases: newCases })
                                                     }}
                                                     placeholder="Expected Output"
-                                                    className="bg-gray-700/50 border border-gray-600 rounded-xl px-6 py-4 resize-none"
-                                                    rows={3}
+                                                    className="bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 resize-none text-sm lg:text-base"
+                                                    rows={2}
                                                 />
                                             </div>
                                             <button
                                                 type="button"
                                                 onClick={() => setForm({ ...form, testCases: form.testCases.filter((_, idx) => idx !== i) })}
-                                                className="text-red-400 hover:text-red-300 pt-2"
+                                                className="text-red-400 hover:text-red-300 pt-1 lg:pt-2"
                                             >
-                                                <Trash2 size={28} />
+                                                <Trash2 className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6" />
                                             </button>
                                         </div>
                                     ))}
@@ -562,28 +569,28 @@ export default function QuestionsByLanguage() {
                                     <button
                                         type="button"
                                         onClick={() => setForm({ ...form, testCases: [...form.testCases, { input: "", expectedOutput: "" }] })}
-                                        className="text-green-400 flex items-center gap-2 hover:underline"
+                                        className="text-green-400 flex items-center gap-1 lg:gap-2 hover:underline text-sm lg:text-base"
                                     >
-                                        <Plus size={24} /> Add Test Case
+                                        <Plus className="w-4 h-4 lg:w-5 lg:h-5" /> Add Test Case
                                     </button>
                                 </div>
                             )}
 
-                            <div className="flex gap-6 pt-8">
+                            <div className="flex gap-2 lg:gap-4 xl:gap-6 pt-4 lg:pt-6 xl:pt-8">
                                 <button
                                     type="button"
                                     onClick={closeModal}
                                     disabled={submitting}
-                                    className="flex-1 py-4 rounded-xl bg-gray-700 hover:bg-gray-600 font-bold text-lg transition disabled:opacity-50"
+                                    className="flex-1 py-2 lg:py-3 xl:py-4 rounded-lg lg:rounded-xl bg-gray-700 hover:bg-gray-600 font-bold text-sm lg:text-base xl:text-lg transition disabled:opacity-50"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submitting || !form.title.trim()}
-                                    className="flex-1 py-4 rounded-xl bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 font-bold text-lg shadow-lg flex items-center justify-center gap-3 transition transform hover:scale-105 disabled:opacity-50"
+                                    className="flex-1 py-2 lg:py-3 xl:py-4 rounded-lg lg:rounded-xl bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 font-bold text-sm lg:text-base xl:text-lg shadow-lg flex items-center justify-center gap-2 lg:gap-3 transition transform hover:scale-105 disabled:opacity-50"
                                 >
-                                    <Save size={28} />
+                                    <Save className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6" />
                                     {submitting ? "Saving..." : editingQuestion ? "Update" : "Create"} Question
                                 </button>
                             </div>
@@ -594,3 +601,5 @@ export default function QuestionsByLanguage() {
         </div>
     )
 }
+
+export default QuestionsByLanguage
