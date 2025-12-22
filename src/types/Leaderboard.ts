@@ -8,6 +8,7 @@ export interface ILeaderboardEntry {
 }
 
 export interface IMyRank {
+    data: any
     rank: number
     userId: string
     username: string
