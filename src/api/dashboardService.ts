@@ -168,7 +168,7 @@ class DashboardService {
                 const dateB = new Date(b.updatedAt || b.createdAt || b.submittedAt || 0).getTime()
                 return dateB - dateA
             })
-            .slice(0, 5)
+            .slice(0, 3)
 
             const recentQuestions: RecentQuestion[] = solvedProgress.map((progress) => {
                 const question = allQuestionsMap.get(progress.questionId || progress.question?._id) || progress.question

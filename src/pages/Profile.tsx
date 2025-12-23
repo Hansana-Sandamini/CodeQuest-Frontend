@@ -2,13 +2,14 @@ import { useState, useEffect } from "react"
 import { useDispatch } from "react-redux"
 import { useAuth } from "../hooks/useAuth"
 import { updateUser, updateProfilePicture } from "../features/auth/authSlice"
-import { Camera, Save, Key, Award, FileText, Flame, Trophy, Shield, Users, BarChart } from "lucide-react"
+import { Camera, Save, Key, Award, Flame, Trophy, Shield, Users, BarChart } from "lucide-react"
 import { userApi } from "../api/userService"
 import swal from "../utils/swal"
 import type { IBadge, ICertificate } from "../types/User"
 import { Link } from "react-router-dom"
 import PasswordInput from "../components/PasswordInput"
 import Avatar from "../components/Avatar"
+import AchievementsSection from "../components/AchievementsSection"
 
 const Profile = () => {
     const { user, isAdmin } = useAuth()
@@ -429,80 +430,6 @@ const Profile = () => {
                                 </form>
                             )}
                         </div>
-
-                        {/* Achievements - Only for regular users */}
-                        {!isAdmin && (
-                            <div className="backdrop-blur-sm bg-gray-800/40 border border-gray-700 rounded-2xl p-8">
-                                <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                                    <Award className="text-yellow-400" />
-                                    Achievements
-                                </h3>
-                                <div className="space-y-6">
-                                    {/* Badges */}
-                                    <div>
-                                        <h4 className="text-lg font-semibold mb-4 text-gray-300">Badges</h4>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            {getUserBadges().length > 0 ? (
-                                                getUserBadges().map((badge: IBadge, index: number) => (
-                                                    <div key={badge._id || index} className="bg-gray-900/50 border border-gray-700 rounded-xl p-4 text-center">
-                                                        <div 
-                                                            className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center" 
-                                                            style={{ backgroundColor: (badge.color || '#CD7F32') + '40' }}
-                                                        >
-                                                            <Award size={32} style={{ color: badge.color || '#CD7F32' }} />
-                                                        </div>
-                                                        <p className="font-medium">{badge.level || 'Badge'}</p>
-                                                        <p className="text-sm text-gray-400">{badge.percentage}%</p>
-                                                        <p className="text-xs text-gray-500">{badge.language?.name || 'Unknown Language'}</p>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <div className="col-span-full text-center py-8">
-                                                    <Award size={48} className="mx-auto mb-4 text-gray-700" />
-                                                    <p className="text-gray-500">No badges earned yet.</p>
-                                                    <p className="text-sm text-gray-600">Start solving questions to earn badges!</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Certificates */}
-                                    <div>
-                                        <h4 className="text-lg font-semibold mb-4 text-gray-300 flex items-center gap-2">
-                                            <FileText className="text-green-400" />
-                                            Certificates
-                                        </h4>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            {getUserCertificates().length > 0 ? (
-                                                getUserCertificates().map((cert: ICertificate, index: number) => (
-                                                    <div key={cert._id || index} className="bg-gray-900/50 border border-green-500/30 rounded-xl p-4">
-                                                        <div className="flex items-center gap-3 mb-3">
-                                                            <FileText className="text-green-400" size={24} />
-                                                            <div>
-                                                                <p className="font-medium">Mastery Certificate</p>
-                                                                <p className="text-sm text-gray-400">{cert.language?.name || 'Unknown Language'}</p>
-                                                            </div>
-                                                        </div>
-                                                        <button
-                                                            onClick={() => handleViewCertificate(cert.url)}
-                                                            className="inline-block px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium transition-colors"
-                                                        >
-                                                            View Certificate
-                                                        </button>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <div className="col-span-full text-center py-8">
-                                                    <FileText size={48} className="mx-auto mb-4 text-gray-700" />
-                                                    <p className="text-gray-500">No certificates earned yet.</p>
-                                                    <p className="text-sm text-gray-600">Complete 100% of any language to earn certificates!</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
                     </div>
 
                     {/* Right Column - Stats & Admin Features */}
@@ -578,6 +505,15 @@ const Profile = () => {
                         )}
                     </div>
                 </div>
+
+                {/* Achievements Section - Only for regular users */}
+                {!isAdmin && (
+                    <AchievementsSection 
+                        badges={getUserBadges()}
+                        certificates={getUserCertificates()}
+                        onViewCertificate={handleViewCertificate}
+                    />
+                )}
             </div>
         </div>
     )

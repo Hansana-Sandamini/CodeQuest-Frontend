@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react"
 import { useParams, useLocation, Link, useNavigate } from "react-router-dom"
-import { ArrowLeft, CheckSquare, Code2, Loader2, CheckCircle, XCircle, HelpCircle, Sparkles, RefreshCw } from "lucide-react"
+import { ArrowLeft, CheckSquare, Code2, Loader2, CheckCircle, XCircle, HelpCircle, Sparkles, RefreshCw, Trophy, Award } from "lucide-react"
 import Editor from "react-monaco-editor"
 import { questionApi } from "../../api/question"
 import { progressApi } from "../../api/progress"
@@ -29,7 +29,9 @@ const QuestionPage = () => {
     const [userProgress, setUserProgress] = useState<any>(null)
     const [pointsEarned, setPointsEarned] = useState<number>(0)
 
-    // Map language to Monaco editor
+    // Track previous completion percentage for badge/certificate detection
+    const [previousPercentage, setPreviousPercentage] = useState<number>(0)
+
     const getMonacoLanguage = (langName: string): string => {
         const l = langName.toLowerCase().trim()
 
@@ -66,53 +68,46 @@ const QuestionPage = () => {
             const q = res.data.data
             setQuestion(q)
 
-            // Fetch user's progress for this question
-            await fetchUserProgress(id!)
+            // Fetch all progress
+            const progressList = await progressApi.getAll()
+            const thisProgress = progressList.find((p: any) => p.question._id === id)
+            setUserProgress(thisProgress || null)
 
+            // Calculate current completion % for this language
+            const langProgress = progressList.filter((p: any) => p.language._id === q.language._id)
+            const completedCount = langProgress.filter(
+                (p: any) => p.isCorrect && p.status === ProgressStatus.COMPLETED
+            ).length
+
+            const totalQuestions = questionsList.length > 0 ? questionsList.length : langProgress.length
+            const percentage = totalQuestions > 0 ? Math.round((completedCount / totalQuestions) * 100) : 0
+            setPreviousPercentage(percentage)
+
+            // Setup code editor
             if (q.type === QuestionType.CODING) {
                 const lang = q.language.name.toLowerCase()
-                let template = ""
-                
-                // Define the boilerplate code
-                const boilerplate = `const fs = require('fs');
-                const lines = fs.readFileSync(0, 'utf-8')
-                        .trim()
-                        .split('\\n')
-                        .filter(line => line.trim() !== '');`
+                let template = "// Start coding here...\nconsole.log('Ready to code!')"
 
-                // Generate template based on language
                 if (lang.includes("python")) {
-                    template = `${boilerplate}\n\n# Write your solution here\ndef solution():\n    # Your code here\n    pass\n\n# Do not remove this line\nsolution()`
-                } 
-                else if (lang.includes("javascript") || lang.includes("js")) {
-                    template = `${boilerplate}\n\n// Write your solution here\nfunction solution() {\n    // Your code here\n    console.log("Hello World!");\n}\n\nsolution();`
+                    template = `# Write your solution here\ndef solution():\n    # Your code here\n    pass\n\nsolution()`
+                } else if (lang.includes("javascript") || lang.includes("js")) {
+                    template = `// Write your solution here\nfunction solution() {\n    console.log("Hello World!");\n}\n\nsolution();`
+                } else if (lang.includes("java")) {
+                    template = `public class Solution {\n    // Write your method here\n}`
+                } else if (lang.includes("c++") || lang.includes("cpp")) {
+                    template = `#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    // Your code\n    return 0;\n}`
                 }
-                else if (lang.includes("java")) {
-                    template = `${boilerplate}\n\npublic class Solution {\n    // Write your method here\n    // Example: public int[] twoSum(int[] nums, int target)\n}`
-                }
-                else if (lang.includes("c++") || lang.includes("cpp")) {
-                    template = `${boilerplate}\n\n// Write your solution here\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    // Your code\n    return 0;\n}`
-                }
-                else {
-                    // Safe fallback
-                    template = `${boilerplate}\n\n// Start coding here...\nconsole.log("Ready to code!")`
-                }
-                
-                // If user already has code solution, use it
-                if (userProgress?.codeSolution) {
-                    setCode(userProgress.codeSolution)
-                } else {
-                    setCode(template)
-                }
+
+                setCode(thisProgress?.codeSolution || template)
             }
 
-            // If MCQ and user has previous answer, select it
-            if (q.type === QuestionType.MCQ && userProgress?.selectedAnswer !== undefined) {
-                setSelectedOption(userProgress.selectedAnswer)
-                if (userProgress.status === ProgressStatus.COMPLETED) {
-                    setIsCorrect(userProgress.isCorrect)
+            // Setup MCQ
+            if (q.type === QuestionType.MCQ && thisProgress?.selectedAnswer !== undefined) {
+                setSelectedOption(thisProgress.selectedAnswer)
+                if (thisProgress.isCorrect) {
+                    setIsCorrect(true)
                     setShowResult(true)
-                    setPointsEarned(userProgress.pointsEarned || 0)
+                    setPointsEarned(thisProgress.pointsEarned || 0)
                 }
             }
         } catch (err) {
@@ -121,24 +116,7 @@ const QuestionPage = () => {
         } finally {
             setLoading(false)
         }
-    }, [id, userProgress])
-
-    const fetchUserProgress = async (questionId: string) => {
-        try {
-            const progressList = await progressApi.getAll()
-            const progress = progressList.find((p: any) => p.question._id === questionId)
-            setUserProgress(progress || null)
-            
-            console.log("User Progress:", progress)
-            if (progress) {
-                console.log("Status:", progress.status)
-                console.log("isCorrect:", progress.isCorrect)
-                console.log("ProgressStatus.COMPLETED:", ProgressStatus.COMPLETED)
-            }
-        } catch (err) {
-            console.error("Failed to fetch progress")
-        }
-    }
+    }, [id, questionsList])
 
     useEffect(() => {
         if (id) fetchQuestion()
@@ -156,48 +134,99 @@ const QuestionPage = () => {
         }
     }
 
-    const handleMCQSubmit = async () => {
-        if (selectedOption === null) return
-        
-        // Don't allow resubmitting if already correct
-        if (userProgress?.isCorrect === true) {
-            swal.fire("Already Completed", "You've already completed this question correctly!", "info")
-            return
-        }
+    const checkForNewMilestones = async (progressList: any[]) => {
+        if (!question) return
 
-        setSubmitLoading(true)
+        const langProgress = progressList.filter((p: any) => p.language._id === question.language._id)
+        const completedCount = langProgress.filter(
+            (p: any) => p.isCorrect && p.status === ProgressStatus.COMPLETED
+        ).length
+        const totalQuestions = questionsList.length > 0 ? questionsList.length : langProgress.length
+        const newPercentage = totalQuestions > 0 ? Math.round((completedCount / totalQuestions) * 100) : 0
+
+        const milestones = [
+            { percent: 20, name: "Bronze Learner", icon: Trophy },
+            { percent: 40, name: "Silver Coder", icon: Trophy },
+            { percent: 60, name: "Gold Developer", icon: Trophy },
+            { percent: 80, name: "Platinum Master", icon: Trophy },
+            { percent: 100, name: "Mastery Certificate", icon: Award },
+        ]
+
+        for (const m of milestones) {
+            if (previousPercentage < m.percent && newPercentage >= m.percent) {
+                const Icon = m.icon
+                if (m.percent === 100) {
+                    await swal.fire({
+                        icon: "success",
+                        title: "🎉 Certificate Earned!",
+                        html: `
+                            <div class="text-center">
+                            <p class="text-lg mb-4">You've mastered <strong>${languageName}</strong>!</p>
+                            <p>Your Certificate of Completion has been issued.</p>
+                            </div>
+                        `,
+                        confirmButtonText: "Amazing!",
+                        allowOutsideClick: false,
+                    })
+                } else {
+                    await swal.fire({
+                        icon: "success",
+                        title: "🏆 New Badge Unlocked!",
+                        html: `
+                            <div class="text-center">
+                            <${Icon.displayName} class="w-16 h-16 mx-auto mb-4 text-yellow-400" />
+                            <p class="text-xl font-bold">${m.name}</p>
+                            <p class="mt-2">Achieved ${m.percent}% in ${languageName}</p>
+                            </div>
+                        `,
+                        confirmButtonText: "Keep Going!",
+                    })
+                }
+            }
+        }
+        setPreviousPercentage(newPercentage)
+    }
+
+    const handleMCQSubmit = async () => {
+    if (selectedOption === null) return
+    if (userProgress?.isCorrect === true) {
+        swal.fire("Already Completed", "You've already solved this correctly!", "info")
+        return
+    }
+
+    setSubmitLoading(true)
         try {
             const res = await progressApi.submit(id!, { selectedAnswer: selectedOption })
             setIsCorrect(res.isCorrect)
             setShowResult(true)
             setPointsEarned(res.pointsEarned)
-            
+
+            const updatedProgressList = await progressApi.getAll()
+            const updatedProgress = updatedProgressList.find((p: any) => p.question._id === id)
+            setUserProgress(updatedProgress)
+
             if (res.isCorrect) {
-                swal.fire({
+                await swal.fire({
                     icon: "success",
-                    title: "Correct!",
-                    text: `+${res.pointsEarned} points!`,
-                    showConfirmButton: true,
-                    confirmButtonText: "Next Question"
+                    title: "Correct! 🎉",
+                    text: `+${res.pointsEarned} points earned!`,
+                    confirmButtonText: "Next Question",
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        navigateToNextQuestion()
-                    }
+                    if (result.isConfirmed) navigateToNextQuestion()
                 })
+                await checkForNewMilestones(updatedProgressList)
+
             } else {
                 swal.fire({
                     icon: "error",
                     title: "Incorrect",
-                    text: "Try again!",
-                    showDenyButton: false,
-                    confirmButtonText: "Try Again"
+                    text: "Try another option!",
+                    confirmButtonText: "Try Again",
                 })
             }
-            
-            // Refresh progress
-            await fetchUserProgress(id!)
+    
         } catch (err) {
-            swal.fire("Error", "Failed to submit", "error")
+            swal.fire("Error", "Submission failed", "error")
         } finally {
             setSubmitLoading(false)
         }
@@ -205,13 +234,12 @@ const QuestionPage = () => {
 
     const handleCodeSubmit = async () => {
         if (!code.trim()) {
-            swal.fire("Error", "Please write some code first", "warning")
+            swal.fire("Empty Code", "Please write some code first", "warning")
             return
         }
-        
-        // Don't allow resubmitting if already correct
+
         if (userProgress?.isCorrect === true) {
-            swal.fire("Already Completed", "You've already completed this question correctly!", "info")
+            swal.fire("Already Completed", "You've already solved this correctly!", "info")
             return
         }
 
@@ -221,33 +249,33 @@ const QuestionPage = () => {
             setIsCorrect(res.isCorrect)
             setShowResult(true)
             setPointsEarned(res.pointsEarned)
-            
+
+            const updatedProgressList = await progressApi.getAll()
+            const updatedProgress = updatedProgressList.find((p: any) => p.question._id === id)
+            setUserProgress(updatedProgress)
+
             if (res.isCorrect) {
-                swal.fire({
+                await swal.fire({
                     icon: "success",
-                    title: "All Tests Passed!",
-                    text: `+${res.pointsEarned} points!`,
-                    showConfirmButton: true,
-                    confirmButtonText: "Next Question"
+                    title: "All Tests Passed! 🚀",
+                    text: `+${res.pointsEarned} points earned!`,
+                    confirmButtonText: "Next Question",
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        navigateToNextQuestion()
-                    }
+                    if (result.isConfirmed) navigateToNextQuestion()
                 })
+                await checkForNewMilestones(updatedProgressList)
+
             } else {
                 swal.fire({
                     icon: "error",
-                    title: "Failed",
-                    text: "Check your logic and try again",
-                    showDenyButton: false,
-                    confirmButtonText: "Try Again"
+                    title: "Test Failed",
+                    text: "Review your code and try again",
+                    confirmButtonText: "Keep Trying",
                 })
             }
-            
-            // Refresh progress
-            await fetchUserProgress(id!)
+    
         } catch (err: any) {
-            swal.fire("Error", err?.message || "Failed to submit", "error")
+            swal.fire("Error", err?.message || "Submission failed", "error")
         } finally {
             setSubmitLoading(false)
         }
@@ -255,37 +283,29 @@ const QuestionPage = () => {
 
     const navigateToNextQuestion = () => {
         let questions = questionsList
-        
-        // Try localStorage as fallback
+
         if (!questions.length) {
-            const stored = localStorage.getItem('currentLanguageQuestions')
-            if (stored) {
-                questions = JSON.parse(stored)
-            }
+            const stored = localStorage.getItem("currentLanguageQuestions")
+            if (stored) questions = JSON.parse(stored)
         }
-        
-        // If still no questions, navigate back
-        if (!questions.length) {
-            navigate(`/languages/${question?.language._id}/questions`, { 
-                state: { languageName } 
-            })
+
+        if (!questions.length || !question) {
+            navigate(`/languages/${question?.language?._id}/questions`, { state: { languageName } })
             return
         }
-        
+
         const currentIndex = questions.findIndex((q: any) => q._id === id)
         if (currentIndex < questions.length - 1) {
-            const nextQuestion = questions[currentIndex + 1]
-            navigate(`/question/${nextQuestion._id}`, {
-                state: { 
-                    languageName, 
-                    questionTitle: nextQuestion.title,
-                    questions
-                }
+            // Not last → go next
+            const next = questions[currentIndex + 1]
+            navigate(`/question/${next._id}`, {
+                state: { languageName, questionTitle: next.title, questions },
             })
         } else {
-            // Last question
-            navigate(`/languages/${question?.language._id}/questions`, { 
-                state: { languageName } 
+            // Last question → go back to language list
+            navigate(`/languages/${question.language._id}/questions`, {
+                state: { languageName },
+                replace: true,
             })
         }
     }
@@ -294,179 +314,155 @@ const QuestionPage = () => {
         setShowResult(false)
         setIsCorrect(false)
         setHint(null)
-        
-        if (question?.type === QuestionType.MCQ) {
-            setSelectedOption(null)
-        } else {
-            // Reset to template
-            const lang = question?.language.name.toLowerCase()
-            let template = ""
-            
-            if (lang?.includes("python")) {
-                template = `# Write your solution here\ndef solution():\n    # Your code here\n    pass\n\n# Do not remove this line\nsolution()`
-            } else if (lang?.includes("javascript") || lang?.includes("js")) {
-                template = `// Write your solution here\nfunction solution() {\n    // Your code here\n    console.log("Hello World!");\n}\n\nsolution();`
-            } else {
-                template = `// Start coding here...\nconsole.log("Ready to code!")`
-            }
-            
+        setSelectedOption(null)
+
+        if (question?.type === QuestionType.CODING) {
+            const lang = question.language.name.toLowerCase()
+            let template = "// Start coding..."
+            if (lang.includes("python")) template = "# Write your solution here\ndef solution():\n    pass\nsolution()"
+            else if (lang.includes("javascript")) template = "// Write your solution here\nfunction solution() {\n    console.log('Hello');\n}\nsolution();"
             setCode(template)
         }
     }
 
     const getDifficultyClass = (difficulty: Difficulty) => {
         switch (difficulty) {
-            case Difficulty.EASY:   return "bg-green-500/20 text-green-400 border-green-500/50"
+            case Difficulty.EASY: return "bg-green-500/20 text-green-400 border-green-500/50"
             case Difficulty.MEDIUM: return "bg-yellow-500/20 text-yellow-400 border-yellow-500/50"
-            case Difficulty.HARD:   return "bg-red-500/20 text-red-400 border-red-500/50"
-            default:                return "bg-gray-500/20 text-gray-400 border-gray-500/50"
+            case Difficulty.HARD: return "bg-red-500/20 text-red-400 border-red-500/50"
+            default: return "bg-gray-500/20 text-gray-400 border-gray-500/50"
         }
     }
 
+    const isCorrectlyCompleted = userProgress?.isCorrect === true
+
     if (loading || !question) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center px-4">
-                <Loader2 className="w-12 h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 animate-spin text-green-400" />
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+                <Loader2 className="w-16 h-16 animate-spin text-green-400" />
             </div>
         )
     }
 
-    // SIMPLIFY: Just check if user got it correct
-    const isCorrectlyCompleted = userProgress?.isCorrect === true
-
     return (
-        <div className="lg:ml-64 lg:ml-74 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-6 lg:py-12 xl:py-16 px-3 lg:px-6 xl:px-8">
+        <div className="lg:ml-64 min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-8 lg:py-12 px-4 lg:px-8">
             <div className="max-w-7xl mx-auto">
 
-                {/* Back Button & Progress */}
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 lg:gap-0 mb-6 lg:mb-8 xl:mb-12">
+                {/* Header & Progress */}
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
                     <Link
                         to={`/languages/${question.language._id}`}
                         state={{ languageName }}
-                        className="inline-flex items-center gap-1 lg:gap-2 text-gray-400 hover:text-white transition-colors text-sm lg:text-base"
+                        className="flex items-center gap-2 text-gray-400 hover:text-white mb-4 lg:mb-0"
                     >
-                        <ArrowLeft className="w-4 h-4 lg:w-5 lg:h-5" />
-                        Back to {languageName} Quizzes
+                        <ArrowLeft className="w-5 h-5" />
+                        Back to {languageName}
                     </Link>
-                    
+
                     {userProgress && (
-                        <div className="flex items-center gap-2 lg:gap-4">
-                            <div className="bg-gray-800/60 px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg lg:rounded-xl border border-gray-700 text-xs lg:text-sm">
-                                <span className="text-gray-400">Attempts: </span>
-                                <span className="font-bold text-white">{userProgress.attempts || 0}</span>
+                        <div className="flex items-center gap-4">
+                            <div className="bg-gray-800/60 px-4 py-2 rounded-lg border border-gray-700">
+                                <span className="text-gray-400">Attempts:</span>
+                                <span className="font-bold ml-2">{userProgress.attempts || 0}</span>
                             </div>
                             {isCorrectlyCompleted && (
-                                <div className="bg-green-500/20 px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg lg:rounded-xl border border-green-500/50 text-xs lg:text-sm">
-                                    <span className="text-green-400">✓ Completed </span>
-                                    <span className="font-bold text-white">(+{pointsEarned} pts)</span>
+                                <div className="bg-green-500/20 px-4 py-2 rounded-lg border border-green-500/50">
+                                    <span className="text-green-400">✓ Completed</span>
+                                    <span className="font-bold ml-2">(+{pointsEarned} pts)</span>
                                 </div>
                             )}
                         </div>
                     )}
                 </div>
 
-                {/* Header */}
-                <div className="text-center mb-8 lg:mb-12 xl:mb-16">
-                    <h1 className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold mb-2 lg:mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent px-4">
+                {/* Title */}
+                <div className="text-center mb-12">
+                    <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
                         {questionTitle}
                     </h1>
-                    <div className="flex flex-wrap justify-center items-center gap-3 lg:gap-4 xl:gap-6 text-gray-400 text-xs lg:text-sm">
-                        <span className="flex items-center gap-1 lg:gap-2"><Code2 className="w-3 h-3 lg:w-4 lg:h-4" /> {languageName}</span>
-                        <span className={`px-2 lg:px-3 xl:px-4 py-0.5 lg:py-1 rounded-full text-xs font-bold border ${getDifficultyClass(question.difficulty)}`}>
+                    <div className="flex flex-wrap justify-center gap-4 mt-4 text-gray-400">
+                        <span className="flex items-center gap-2"><Code2 className="w-5 h-5" /> {languageName}</span>
+                        <span className={`px-4 py-1 rounded-full border text-sm font-bold ${getDifficultyClass(question.difficulty)}`}>
                             {question.difficulty}
                         </span>
-                        <span className="flex items-center gap-1 lg:gap-2">
-                            {question.type === QuestionType.MCQ ? <CheckSquare className="w-3 h-3 lg:w-4 lg:h-4" /> : <Code2 className="w-3 h-3 lg:w-4 lg:h-4" />}
+                        <span className="flex items-center gap-2">
+                            {question.type === QuestionType.MCQ ? <CheckSquare className="w-5 h-5" /> : <Code2 className="w-5 h-5" />}
                             {question.type === QuestionType.MCQ ? "Multiple Choice" : "Coding Challenge"}
                         </span>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 xl:gap-10">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-                    {/* Left Column */}
-                    <div className="space-y-6 lg:space-y-8">
+                    {/* Left: Question & Options */}
+                    <div className="space-y-8">
 
-                        {/* Question Card */}
-                        <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700 rounded-lg lg:rounded-xl xl:rounded-2xl p-4 lg:p-6 xl:p-8 hover:border-gray-600 transition-all duration-300">
-                            <h2 className="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold mb-4 lg:mb-6">{question.title}</h2>
-                            <div className="prose prose-invert max-w-none text-gray-300 text-sm lg:text-base xl:text-lg leading-relaxed whitespace-pre-wrap">
-                                {question.description || "No description provided."}
-                            </div>
+                        <div className="bg-gray-800/40 backdrop-blur border border-gray-700 rounded-2xl p-8">
+                            <h2 className="text-2xl font-bold mb-6">{question.title}</h2>
+                            <div className="text-gray-300 whitespace-pre-wrap">{question.description}</div>
                         </div>
 
-                        {/* Hint */}
                         <button
                             onClick={handleGetHint}
                             disabled={hintLoading}
-                            className="w-full flex items-center justify-center gap-2 lg:gap-3 bg-gradient-to-r from-purple-600 to-indigo-600 
-                                        hover:from-purple-700 hover:to-indigo-700 py-3 lg:py-4 xl:py-5 rounded-lg lg:rounded-xl xl:rounded-2xl font-bold text-base lg:text-lg xl:text-xl
-                                        transition-all duration-300 disabled:opacity-50 shadow-lg lg:shadow-xl xl:shadow-2xl shadow-purple-500/30"
+                            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 py-4 rounded-2xl font-bold text-lg shadow-xl"
                         >
-                            {hintLoading ? <Loader2 className="w-5 h-5 lg:w-6 lg:h-6 animate-spin" /> : <Sparkles className="w-5 h-5 lg:w-6 lg:h-6" />}
-                            {hintLoading ? "Thinking..." : "Reveal Hint"}
+                            {hintLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Sparkles className="w-6 h-6" />}
+                            {hintLoading ? "Loading Hint..." : "Reveal Hint"}
                         </button>
 
                         {hint && (
-                            <div className="p-4 lg:p-6 xl:p-8 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border-2 border-purple-500/50 
-                                            rounded-lg lg:rounded-xl xl:rounded-2xl text-purple-300 backdrop-blur-sm shadow-lg lg:shadow-xl shadow-purple-500/20">
-                                <strong className="flex items-center gap-2 lg:gap-3 text-base lg:text-lg xl:text-xl mb-2 lg:mb-3">
-                                    <HelpCircle className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" /> Hint
+                            <div className="bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border-2 border-purple-500/50 rounded-2xl p-6 text-purple-300">
+                                <strong className="flex items-center gap-3 text-xl mb-3">
+                                    <HelpCircle className="w-7 h-7" /> Hint
                                 </strong>
-                                <p className="text-sm lg:text-base xl:text-lg leading-relaxed">{hint}</p>
+                                <p>{hint}</p>
                             </div>
                         )}
 
                         {/* MCQ Options */}
                         {question.type === QuestionType.MCQ && question.options && (
-                            <div className="space-y-4 lg:space-y-6">
+                            <div className="space-y-6">
                                 <div className="flex justify-between items-center">
-                                    <h3 className="text-base lg:text-lg xl:text-xl font-bold mb-3 lg:mb-4">Select your answer:</h3>
+                                    <h3 className="text-xl font-bold">Choose your answer:</h3>
                                     {!isCorrectlyCompleted && (
-                                        <button
-                                            onClick={handleReset}
-                                            className="flex items-center gap-1 lg:gap-2 px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors"
-                                        >
-                                            <RefreshCw className="w-3 h-3 lg:w-4 lg:h-4" /> Reset
+                                        <button onClick={handleReset} className="flex items-center gap-2 text-sm bg-gray-700/50 hover:bg-gray-700 px-4 py-2 rounded-lg">
+                                            <RefreshCw className="w-4 h-4" /> Reset
                                         </button>
                                     )}
                                 </div>
-                                
+
                                 {question.options.map((opt, i) => (
                                     <label
                                         key={i}
-                                        className={`block p-4 lg:p-5 xl:p-7 rounded-lg lg:rounded-xl xl:rounded-2xl border-2 cursor-pointer transition-all duration-300
-                                            group relative overflow-hidden backdrop-blur-sm shadow-md lg:shadow-lg
-                                            ${userProgress?.isCorrect === true && selectedOption === i
-                                                ? "border-green-500 bg-green-500/20 shadow-green-500/40"
-                                                : userProgress?.isCorrect === false && selectedOption === i
-                                                ? "border-red-500 bg-red-500/20 shadow-red-500/40"
-                                                : selectedOption === i
-                                                ? "border-blue-500 bg-blue-500/10"
-                                                : "border-gray-700 hover:border-gray-600 hover:bg-gray-800/40"
-                                            }`}
+                                        className={`block p-6 rounded-2xl border-2 cursor-pointer transition-all
+                                            ${isCorrectlyCompleted && selectedOption === i && userProgress?.isCorrect
+                                            ? "border-green-500 bg-green-500/20"
+                                            : !isCorrectlyCompleted && selectedOption === i
+                                            ? "border-blue-500 bg-blue-500/10"
+                                            : userProgress?.isCorrect === false && selectedOption === i
+                                            ? "border-red-500 bg-red-500/20"
+                                            : "border-gray-700 hover:border-gray-600 hover:bg-gray-800/40"
+                                            }`
+                                        }
                                     >
                                         <input
                                             type="radio"
                                             name="option"
                                             className="hidden"
                                             checked={selectedOption === i}
-                                            onChange={() => {
-                                                // Allow changing if not correctly completed
-                                                if (!isCorrectlyCompleted) {
-                                                    setSelectedOption(i)
-                                                    setShowResult(false)
-                                                }
-                                            }}
+                                            onChange={() => !isCorrectlyCompleted && setSelectedOption(i)}
                                             disabled={isCorrectlyCompleted}
                                         />
-                                        
+                        
                                         <div className="flex items-center justify-between">
-                                            <span className="text-sm lg:text-base xl:text-lg font-medium line-clamp-1">{opt}</span>
-                                            {userProgress && selectedOption === i && (
-                                                userProgress.isCorrect ? 
-                                                    <CheckCircle className="text-green-400 w-6 h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" /> :
-                                                    <XCircle className="text-red-400 w-6 h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
+                                            <span className="text-lg">{opt}</span>
+                                            {selectedOption === i && userProgress && (
+                                                userProgress.isCorrect ? (
+                                                    <CheckCircle className="w-8 h-8 text-green-400" />
+                                                ) : (
+                                                    <XCircle className="w-8 h-8 text-red-400" />
+                                                )
                                             )}
                                         </div>
                                     </label>
@@ -475,150 +471,96 @@ const QuestionPage = () => {
                                 <button
                                     onClick={handleMCQSubmit}
                                     disabled={selectedOption === null || submitLoading || isCorrectlyCompleted}
-                                    className="w-full py-3 lg:py-4 xl:py-5 rounded-lg lg:rounded-xl xl:rounded-2xl bg-gradient-to-r from-green-600 to-blue-600 
-                                                hover:from-green-700 hover:to-blue-700 font-bold text-base lg:text-lg xl:text-xl 
-                                                disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg lg:shadow-xl xl:shadow-2xl shadow-green-500/40
-                                                flex items-center justify-center gap-2 lg:gap-3 xl:gap-4"
+                                    className="w-full py-5 rounded-2xl bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 font-bold text-xl disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl"
                                 >
-                                    {submitLoading ? (
-                                        <Loader2 className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 animate-spin" />
-                                    ) : isCorrectlyCompleted ? (
-                                        <>
-                                            <CheckCircle className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" />
-                                            Completed (+{pointsEarned} pts)
-                                        </>
-                                    ) : userProgress && !userProgress.isCorrect ? (
-                                        <>
-                                            <XCircle className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" />
-                                            Submit Again
-                                        </>
-                                    ) : (
-                                        <>
-                                            <CheckCircle className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" />
-                                            Submit Answer
-                                        </>
-                                    )}
+                                    {submitLoading ? <Loader2 className="w-7 h-7 animate-spin" /> : <CheckCircle className="w-7 h-7" />}
+                                    {isCorrectlyCompleted ? "Completed" : "Submit Answer"}
                                 </button>
                             </div>
                         )}
 
                         {/* Test Cases */}
                         {question.type === QuestionType.CODING && question.testCases && (
-                            <div className="space-y-4 lg:space-y-6">
-                                <h3 className="text-base lg:text-lg xl:text-xl font-bold flex items-center gap-2 lg:gap-3">
-                                    <Code2 className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" /> Test Cases
+                            <div className="space-y-4">
+                                <h3 className="text-xl font-bold flex items-center gap-3">
+                                    <Code2 className="w-6 h-6" /> Test Cases
                                 </h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 xl:gap-5">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {question.testCases.map((tc, i) => (
-                                    <div
-                                        key={i}
-                                        onClick={() => setActiveTestCase(i)}
-                                        className={`p-3 lg:p-4 xl:p-6 rounded-lg lg:rounded-xl xl:rounded-2xl border-2 cursor-pointer transition-all duration-300
-                                        ${activeTestCase === i 
-                                            ? "border-green-500 bg-green-500/10 shadow-lg lg:shadow-xl shadow-green-500/30" 
-                                            : "border-gray-700 hover:border-gray-600 hover:bg-gray-800/30"}`}
-                                    >
-                                        <strong className="text-sm lg:text-base xl:text-lg block mb-2 lg:mb-3">Case {i + 1}</strong>
-                                        <pre className="text-xs bg-black/40 p-2 lg:p-3 xl:p-4 rounded-lg font-mono overflow-x-auto">
-                                            <div><span className="text-gray-500">Input:</span> {tc.input || "<empty>"}</div>
-                                            <div className="mt-1 lg:mt-2"><span className="text-gray-500">Expected:</span> {tc.expectedOutput || "<empty>"}</div>
-                                        </pre>
-                                    </div>
+                                        <div
+                                            key={i}
+                                            onClick={() => setActiveTestCase(i)}
+                                            className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                                            activeTestCase === i
+                                                ? "border-green-500 bg-green-500/10"
+                                                : "border-gray-700 hover:border-gray-600"
+                                            }`}
+                                        >
+                                            <strong className="block mb-2">Case {i + 1}</strong>
+                                            <pre className="text-xs bg-black/40 p-3 rounded font-mono overflow-x-auto">
+                                                <div><span className="text-gray-500">Input:</span> {tc.input || "<empty>"}</div>
+                                                <div className="mt-2"><span className="text-gray-500">Expected:</span> {tc.expectedOutput || "<empty>"}</div>
+                                            </pre>
+                                        </div>
                                     ))}
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Right Column - Monaco Editor */}
+                    {/* Right: Code Editor */}
                     {question.type === QuestionType.CODING && (
-                        <div className="flex flex-col space-y-6 lg:space-y-8">
-                            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 lg:gap-4">
-                                <h3 className="text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold flex items-center gap-2 lg:gap-3">
-                                    <Code2 className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" /> Your Solution
+                        <div className="space-y-6">
+                            <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
+                                <h3 className="text-2xl font-bold flex items-center gap-3">
+                                    <Code2 className="w-7 h-7" /> Your Solution
                                 </h3>
-                                <div className="flex flex-wrap gap-2 lg:gap-3 xl:gap-4 w-full lg:w-auto">
+                                <div className="flex gap-3 w-full lg:w-auto">
                                     {!isCorrectlyCompleted && (
                                         <button
                                             onClick={handleReset}
-                                            className="flex items-center gap-1 lg:gap-2 px-3 lg:px-4 xl:px-6 py-2 lg:py-3 bg-gray-700/50 hover:bg-gray-700 rounded-lg lg:rounded-xl transition-colors text-xs lg:text-sm"
+                                            className="flex items-center gap-2 px-5 py-3 bg-gray-700/50 hover:bg-gray-700 rounded-xl"
                                         >
-                                            <RefreshCw className="w-3 h-3 lg:w-4 lg:h-4 xl:w-5 xl:h-5" /> Reset Code
+                                            <RefreshCw className="w-5 h-5" /> Reset Code
                                         </button>
                                     )}
                                     <button
                                         onClick={handleCodeSubmit}
                                         disabled={submitLoading || isCorrectlyCompleted}
-                                        className="flex items-center gap-2 lg:gap-3 xl:gap-4 bg-gradient-to-r from-green-600 to-blue-600 
-                                                    hover:from-green-700 hover:to-blue-700 px-4 lg:px-6 xl:px-8 2xl:px-10 py-2.5 lg:py-3 xl:py-4 2xl:py-5 rounded-lg lg:rounded-xl xl:rounded-2xl font-bold text-sm lg:text-base xl:text-lg
-                                                    transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg lg:shadow-xl xl:shadow-2xl shadow-green-500/50"
+                                        className="flex-1 lg:flex-initial flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-xl font-bold text-lg disabled:opacity-50 shadow-xl"
                                     >
-                                        {submitLoading ? (
-                                            <Loader2 className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 animate-spin" />
-                                        ) : isCorrectlyCompleted ? (
-                                            <>
-                                                <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6" />
-                                                Completed
-                                            </>
-                                        ) : userProgress && !userProgress.isCorrect ? (
-                                            <>
-                                                <XCircle className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6" />
-                                                Submit Again
-                                            </>
-                                        ) : (
-                                            <>
-                                                <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6" />
-                                                Run & Submit
-                                            </>
-                                        )}
+                                        {submitLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <CheckCircle className="w-6 h-6" />}
+                                        {isCorrectlyCompleted ? "Completed" : "Run & Submit"}
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="rounded-lg lg:rounded-xl xl:rounded-2xl overflow-hidden border-2 lg:border-3 xl:border-4 border-gray-800 shadow-lg lg:shadow-xl xl:shadow-2xl">
+                            <div className="rounded-2xl overflow-hidden border-4 border-gray-800 shadow-2xl">
                                 <Editor
-                                    height="400px"
+                                    height="500px"
                                     language={getMonacoLanguage(question.language.name)}
                                     value={code}
-                                    onChange={(value) => {
-                                        // Allow editing if not correctly completed
-                                        if (!isCorrectlyCompleted) {
-                                            setCode(value);
-                                            setShowResult(false);
-                                        }
-                                    }}
+                                    onChange={(val) => !isCorrectlyCompleted && setCode(val)}
                                     theme="vs-dark"
                                     options={{
-                                        fontSize: 14,
-                                        fontFamily: "'Fira Code', 'JetBrains Mono', monospace",
-                                        lineHeight: 22,
+                                        fontSize: 15,
+                                        fontFamily: "'Fira Code', monospace",
                                         minimap: { enabled: false },
-                                        scrollBeyondLastLine: false,
                                         wordWrap: "on",
                                         automaticLayout: true,
-                                        cursorBlinking: "smooth",
-                                        cursorSmoothCaretAnimation: "on",
-                                        folding: true,
-                                        lineNumbers: "on",
-                                        renderWhitespace: "selection",
-                                        smoothScrolling: true,
-                                        formatOnPaste: true,
-                                        formatOnType: true,
-                                        bracketPairColorization: { enabled: true },
-                                        readOnly: isCorrectlyCompleted
+                                        scrollBeyondLastLine: false,
+                                        readOnly: isCorrectlyCompleted,
                                     }}
                                 />
                             </div>
 
                             {showResult && (
-                                <div className={`p-4 lg:p-6 xl:p-8 rounded-lg lg:rounded-xl xl:rounded-2xl text-center text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold animate-pulse border-2 lg:border-3 xl:border-4
-                                    ${isCorrect 
-                                    ? "bg-gradient-to-r from-green-600/30 to-emerald-600/30 border-green-500 text-green-400 shadow-lg lg:shadow-xl xl:shadow-2xl shadow-green-500/50" 
-                                    : "bg-gradient-to-r from-red-600/30 to-rose-600/30 border-red-500 text-red-400 shadow-lg lg:shadow-xl xl:shadow-2xl shadow-red-500/50"}`}
-                                >
-                                    {isCorrect 
-                                    ? "All Tests Passed! You're a genius!" 
-                                    : "Some tests failed — keep coding!"}
+                                <div className={`p-8 rounded-2xl text-center text-2xl font-bold border-4 animate-pulse ${
+                                    isCorrect
+                                    ? "bg-green-600/30 border-green-500 text-green-400"
+                                    : "bg-red-600/30 border-red-500 text-red-400"
+                                }`}>
+                                    {isCorrect ? "All Tests Passed! Genius! 🎉" : "Some Tests Failed — Keep Going!"}
                                 </div>
                             )}
                         </div>
