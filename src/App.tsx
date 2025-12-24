@@ -5,8 +5,8 @@ import AdminRoute from "./components/AdminRoute"
 import RoleBasedRedirect from "./components/RoleBasedRedirect"
 
 import Home from "./pages/home/Home"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
+import Login from "./pages/auth/Login"
+import Register from "./pages/auth/Register"
 import UserDashboard from "./pages/user/UserDashboard"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import { useAuth } from "./hooks/useAuth"
@@ -19,6 +19,7 @@ import QuestionPage from "./pages/user/QuestionPage"
 import AdminUsers from "./pages/admin/AdminUsers"
 import Profile from "./pages/Profile"
 import Leaderboard from "./pages/Leaderboard"
+import GoogleCallback from "./pages/auth/GoogleCallback"
 
 export default function App() {
     const { isAuthenticated } = useAuth()
@@ -38,6 +39,7 @@ export default function App() {
                     <Route path="/" element={<Home />} /> 
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
                     {/* Protected Routes (any logged-in user) */}
                     <Route element={<ProtectedRoute />}>

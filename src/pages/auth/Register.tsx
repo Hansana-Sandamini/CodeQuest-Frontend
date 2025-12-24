@@ -1,11 +1,11 @@
 import { useState } from "react"
 import { useDispatch } from "react-redux"
-import { registerUserAction } from "../features/auth/authActions"
-import type { AppDispatch } from "../store/store"
+import { registerUserAction } from "../../features/auth/authActions"
+import type { AppDispatch } from "../../store/store"
 import { Link, useNavigate } from "react-router-dom"
-import Button from "../components/Button"
-import { handleAuthAction } from "../utils/swal"
-import PasswordInput from "../components/PasswordInput"
+import Button from "../../components/Button"
+import { handleAuthAction } from "../../utils/swal"
+import PasswordInput from "../../components/PasswordInput"
 
 const Register = () => {
     const dispatch = useDispatch<AppDispatch>()
