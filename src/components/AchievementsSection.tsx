@@ -59,7 +59,7 @@ const BadgesSection = ({ badges }: { badges: IBadge[] }) => {
     // Group badges by language
     const groupedBadges: { [key: string]: IBadge[] } = {}
     visibleBadges.forEach(badge => {
-        const langName = badge.language?.name || 'Unknown'
+        const langName = (typeof badge.language === 'object' && badge.language?.name) || 'Unknown'
         if (!groupedBadges[langName]) {
             groupedBadges[langName] = []
         }
@@ -132,7 +132,7 @@ const BadgesSection = ({ badges }: { badges: IBadge[] }) => {
                                     className="bg-gray-900/50 border border-gray-700 rounded-xl p-3 text-center hover:border-gray-600 transition-colors group relative"
                                 >
                                     {/* Badge icon with color */}
-                                    <div className="relative w-16 h-16 mx-auto mb-2">
+                                    <div className="w-16 h-16 mx-auto mb-2">
                                         <div 
                                             className="absolute inset-0 rounded-full flex items-center justify-center" 
                                             style={{ backgroundColor: colors.progress }}
@@ -236,7 +236,7 @@ const CertificatesSection = ({ certificates, onViewCertificate }: {
                                     </div>
                                     <div className="flex-1">
                                         <p className="font-medium">Mastery Certificate</p>
-                                        <p className="text-sm text-gray-400">{cert.language?.name || 'Unknown Language'}</p>
+                                        <p className="text-sm text-gray-400">{(typeof cert.language === 'object' && cert.language?.name) || 'Unknown Language'}</p>
                                         {cert.earnedAt && (
                                             <p className="text-xs text-gray-500 mt-1">
                                                 Earned on {new Date(cert.earnedAt).toLocaleDateString()}
