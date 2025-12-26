@@ -32,7 +32,7 @@ export function usePagination<T>({
             return data
         }
 
-        const term = searchTerm.toLowerCase();
+        const term = searchTerm.toLowerCase()
             return data.filter(item => 
                 searchFields.some(field => {
                     const value = item[field]

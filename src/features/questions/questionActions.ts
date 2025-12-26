@@ -20,7 +20,7 @@ export const fetchQuestionsByLanguage = createAsyncThunk(
         const res = await questionApi.getByLanguage(languageId, difficulty)
         const questions = res.data.data ?? []
         dispatch(setQuestions(questions))
-        return questions;
+        return questions
     }
 )
 

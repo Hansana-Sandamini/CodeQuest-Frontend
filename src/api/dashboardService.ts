@@ -138,7 +138,7 @@ class DashboardService {
 
             return {
                 currentStreak: `${streak} day${streak === 1 ? '' : 's'}`,
-                totalLanguages: userLanguages.size,
+                totalLanguages: userProfile?.certificates?.length || 0, 
                 allLanguagesCount: languages.length,
                 totalQuestions: allQuestions.length,
                 solvedQuestions: solvedCount,

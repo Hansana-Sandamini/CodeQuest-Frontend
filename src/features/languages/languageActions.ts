@@ -6,6 +6,8 @@ import {
     updateLanguage,
     deleteLanguage
 } from "../../api/language"
+import type { RootState } from "../../store/store"
+import api from "../../api/axiosInstance"
 
 const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -49,7 +51,7 @@ export const updateLang = createAsyncThunk<ILanguage, { id: string; data: FormDa
             }
 
             const language = await updateLanguage(id, data)
-            return language  // ← same here
+            return language 
         } catch (err: any) {
             return rejectWithValue(err.response?.data || { message: "Update failed" })
         }
@@ -64,7 +66,29 @@ export const deleteLang = createAsyncThunk<string, string>(
     }
 )
 
-export const fetchLanguages = createAsyncThunk<ILanguage[], void>(
+export const fetchLanguages = createAsyncThunk<
+    { languages: ILanguage[]; completedIds: string[] }, 
+    void
+>(
     "languages/fetchAll",
-    async () => await getLanguages()
+    async (_, { getState, rejectWithValue }) => {
+        try {
+            const state = getState() as RootState
+            const userId = state.auth?.user?._id
+
+            const [langResponse, completedResponse] = await Promise.all([
+            getLanguages(),
+            userId 
+                ? api.get(`/users/${userId}/completed-languages`)  
+                : Promise.resolve({ data: { completed: [] } })
+            ])
+
+            return {
+                languages: langResponse, 
+                completedIds: completedResponse.data?.completed || completedResponse.data?.data || []
+            }
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data?.message || "Failed to fetch languages data")
+        }
+    }
 )

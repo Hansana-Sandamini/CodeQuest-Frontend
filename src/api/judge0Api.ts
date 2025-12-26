@@ -23,5 +23,5 @@ export const submitCode = async (payload: {
 
 export const getSubmissionResult = async (token: string) => {
     const { data } = await client.get(`/${token}?base64_encoded=false`)
-    return data;
+    return data
 }

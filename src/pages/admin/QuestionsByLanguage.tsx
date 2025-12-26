@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux"
 import { fetchQuestionsByLanguage, clearQuestionsAction, createQuestion, updateQuestion, deleteQuestion } from "../../features/questions/questionActions"
-import { ArrowLeft, Plus, Edit2, Trash2, Globe, X, Save, Code2 } from "lucide-react"
+import { ArrowLeft, Plus, Edit2, Trash2, Globe, X, Save, Code2, CheckCircle } from "lucide-react"
 import swal from "../../utils/swal"
 import type { Question } from "../../types/Question"
 import { fetchLanguages } from "../../features/languages/languageActions"
@@ -333,20 +333,20 @@ const QuestionsByLanguage = () => {
                                         </span>
                                     </div>
 
-                                    <div className="p-4 lg:p-6 xl:p-8">
+                                    <div className="p-4 lg:p-6 xl:p-8 mt-4">
                                         <h3 className="text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold text-white mb-2 lg:mb-3 xl:mb-4 line-clamp-2">{q.title}</h3>
                                         <p className="text-gray-400 text-xs lg:text-sm line-clamp-3 mb-4 lg:mb-6 xl:mb-8">{q.description || "No description"}</p>
 
                                         <div className="flex gap-2 lg:gap-3">
                                             <button
                                                 onClick={() => openModal(q)}
-                                                className="flex-1 flex items-center justify-center gap-1 lg:gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-2 lg:py-3 xl:py-4 rounded-lg lg:rounded-xl font-bold text-xs lg:text-sm xl:text-base transition-all shadow-lg"
+                                                className="flex-1 flex items-center justify-center gap-1 lg:gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-1.5 lg:py-2 xl:py-2.5 rounded-lg lg:rounded-xl font-bold text-xs lg:text-sm xl:text-base transition-all shadow-lg"
                                             >
                                                 <Edit2 className="w-3 h-3 lg:w-4 lg:h-4" /> Edit
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(q._id)}
-                                                className="flex-1 flex items-center justify-center gap-1 lg:gap-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 py-2 lg:py-3 xl:py-4 rounded-lg lg:rounded-xl font-bold text-xs lg:text-sm xl:text-base transition-all shadow-lg"
+                                                className="flex-1 flex items-center justify-center gap-1 lg:gap-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 py-1.5 lg:py-2 xl:py-2.5 rounded-lg lg:rounded-xl font-bold text-xs lg:text-sm xl:text-base transition-all shadow-lg"
                                             >
                                                 <Trash2 className="w-3 h-3 lg:w-4 lg:h-4" /> Delete
                                             </button>
@@ -389,209 +389,250 @@ const QuestionsByLanguage = () => {
 
             {/* MODAL */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-2 lg:p-4 overflow-y-auto">
-                    <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-lg lg:rounded-xl xl:rounded-2xl 2xl:rounded-3xl shadow-2xl max-w-[95vw] lg:max-w-4xl w-full my-4 lg:my-8 p-4 lg:p-6 xl:p-8 relative max-h-screen overflow-y-auto mx-2">
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+                    <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl lg:rounded-2xl shadow-2xl max-w-[95vw] lg:max-w-3xl w-full my-4 lg:my-8 p-6 lg:p-8 relative max-h-[95vh] overflow-y-auto">
                         <button
                             onClick={closeModal}
-                            className="absolute top-3 lg:top-4 xl:top-6 right-3 lg:right-4 xl:right-6 text-gray-400 hover:text-white transition"
+                            className="absolute top-4 lg:top-6 right-4 lg:right-6 text-gray-400 hover:text-white transition z-10"
                         >
-                            <X className="w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" />
+                            <X className="w-6 h-6 lg:w-7 lg:h-7" />
                         </button>
 
-                        <h2 className="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-4 lg:mb-6 xl:mb-8">
-                            {editingQuestion ? "Edit" : "Add New"} Question — {language.name}
+                        <h2 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-6">
+                            {editingQuestion ? "Edit" : "Add New"} Question — <span className="text-white">{language.name}</span>
                         </h2>
 
-                        <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6 xl:space-y-8">
+                        <form onSubmit={handleSubmit} className="space-y-6">
 
-                            <div>
-                                <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-1 lg:mb-2 xl:mb-3">Title <span className="text-red-500">*</span></label>
-                                <input
-                                    required
-                                    value={form.title}
-                                    onChange={(e) => setForm({ ...form, title: e.target.value })}
-                                    className="w-full bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500 text-sm lg:text-base"
-                                    placeholder="e.g. What is hoisting in JavaScript?"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-1 lg:mb-2 xl:mb-3">Description (optional)</label>
-                                <textarea
-                                    rows={3}
-                                    value={form.description}
-                                    onChange={(e) => setForm({ ...form, description: e.target.value })}
-                                    className="w-full bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-white resize-none focus:outline-none focus:ring-2 focus:ring-green-500 text-sm lg:text-base"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 xl:gap-8">
+                            {/* Title & Description */}
+                            <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-1 lg:mb-2 xl:mb-3">Type</label>
+                                    <label className="block text-base font-medium text-white mb-2">
+                                        Title <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        required
+                                        value={form.title}
+                                        onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                        className="w-full bg-gray-700/60 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-base"
+                                        placeholder="e.g. What is hoisting in JavaScript?"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-base font-medium text-white mb-2">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        rows={3}
+                                        value={form.description}
+                                        onChange={(e) => setForm({ ...form, description: e.target.value })}
+                                        className="w-full bg-gray-700/60 border border-gray-600 rounded-lg px-4 py-3 text-white resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-base"
+                                        placeholder="Describe the question..."
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Type & Difficulty */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-base font-medium text-white mb-2">Question Type</label>
                                     <select
                                         value={form.type}
                                         onChange={(e) => {
                                             const type = e.target.value as "MCQ" | "CODING"
                                             setForm({
-                                            ...form,
-                                            type,
-                                            options: type === "MCQ" ? form.options : [""],
-                                            testCases: type === "CODING" ? form.testCases : [],
+                                                ...form,
+                                                type,
+                                                options: type === "MCQ" ? ["", "", "", ""] : [""],
+                                                testCases: type === "CODING" ? [] : [],
                                             })
                                         }}
-                                        className="w-full bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-sm lg:text-base"
+                                        className="w-full bg-gray-700/60 border border-gray-600 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                     >
-                                        <option value="MCQ">Multiple Choice</option>
-                                        <option value="CODING">Coding Challenge</option>
+                                        <option value="MCQ">📝 Multiple Choice</option>
+                                        <option value="CODING">💻 Coding Challenge</option>
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-1 lg:mb-2 xl:mb-3">Difficulty</label>
+                                    <label className="block text-base font-medium text-white mb-2">Difficulty Level</label>
                                     <select
                                         value={form.difficulty}
                                         onChange={(e) => setForm({ ...form, difficulty: e.target.value as any })}
-                                        className="w-full bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-sm lg:text-base"
+                                        className="w-full bg-gray-700/60 border border-gray-600 rounded-lg px-4 py-3 text-base focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                     >
-                                        <option value="EASY">Easy</option>
-                                        <option value="MEDIUM">Medium</option>
-                                        <option value="HARD">Hard</option>
+                                        <option value="EASY" className="text-green-400">🟢 Easy</option>
+                                        <option value="MEDIUM" className="text-yellow-400">🟡 Medium</option>
+                                        <option value="HARD" className="text-red-400">🔴 Hard</option>
                                     </select>
                                 </div>
                             </div>
 
                             {/* MCQ Options */}
                             {form.type === "MCQ" && (
-                                <div>
-                                    <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-2 lg:mb-3 xl:mb-4">Options</label>
-                                    {form.options.map((opt, i) => (
-                                        <div key={i} className="flex gap-2 lg:gap-3 xl:gap-4 mb-2 lg:mb-3 xl:mb-4 items-center">
-                                            <input
-                                                type="text"
-                                                value={opt}
-                                                onChange={(e) => {
-                                                    const opts = [...form.options]
-                                                    opts[i] = e.target.value
-                                                    setForm({ ...form, options: opts })
-                                                }}
-                                                className="flex-1 bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 text-sm lg:text-base"
-                                                placeholder={`Option ${i + 1}`}
-                                            />
-                                            {form.options.length > 2 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        const newOpts = form.options.filter((_, idx) => idx !== i)
-                                                        setForm({
-                                                            ...form,
-                                                            options: newOpts,
-                                                            correctAnswer: form.correctAnswer >= i ? form.correctAnswer - 1 : form.correctAnswer,
-                                                        })
-                                                    }}
-                                                    className="text-red-400 hover:text-red-300"
-                                                >
-                                                    <Trash2 className="w-4 h-4 lg:w-5 lg:h-5" />
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-
-                                    <button
-                                        type="button"
-                                        onClick={() => setForm({ ...form, options: [...form.options, ""] })}
-                                        className="text-green-400 flex items-center gap-1 lg:gap-2 hover:underline text-sm lg:text-base"
-                                    >
-                                        <Plus className="w-4 h-4 lg:w-5 lg:h-5" /> Add Option
-                                    </button>
-
-                                    <div className="mt-4 lg:mt-6">
-                                        <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-1 lg:mb-2 xl:mb-3">Correct Answer</label>
-                                        <select
-                                            value={form.correctAnswer}
-                                            onChange={(e) => setForm({ ...form, correctAnswer: +e.target.value })}
-                                            className="w-full bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-sm lg:text-base"
+                                <div className="space-y-4 bg-gray-800/30 rounded-xl p-5 border border-gray-700">
+                                    <div className="flex justify-between items-center">
+                                        <label className="block text-lg font-semibold text-white">
+                                            Multiple Choice Options
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setForm({ ...form, options: [...form.options, ""] })}
+                                            className="text-green-400 hover:text-green-300 flex items-center gap-2 text-sm font-medium px-3 py-1.5 bg-green-500/10 rounded-lg"
                                         >
-                                            {form.options.map((opt, i) => (
-                                                <option key={i} value={i}>
-                                                    {opt.trim() || `Option ${i + 1}`}
-                                                </option>
-                                            ))}
-                                        </select>
+                                            <Plus className="w-4 h-4" /> Add Option
+                                        </button>
+                                    </div>
+                                    
+                                    <div className="space-y-3">
+                                        {form.options.map((opt, i) => (
+                                            <div key={i} className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors">
+                                                <div className={`w-8 h-8 flex items-center justify-center rounded-full ${form.correctAnswer === i ? 'bg-green-500/20 text-green-400' : 'bg-gray-700'} font-bold`}>
+                                                    {String.fromCharCode(65 + i)}
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    value={opt}
+                                                    onChange={(e) => {
+                                                        const opts = [...form.options]
+                                                        opts[i] = e.target.value
+                                                        setForm({ ...form, options: opts })
+                                                    }}
+                                                    className="flex-1 bg-transparent border-none focus:outline-none text-white text-base"
+                                                    placeholder={`Enter option ${i + 1}...`}
+                                                />
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setForm({ ...form, correctAnswer: i })}
+                                                        className={`p-1.5 rounded-full ${form.correctAnswer === i ? 'bg-green-500' : 'bg-gray-600 hover:bg-gray-500'}`}
+                                                        title="Mark as correct"
+                                                    >
+                                                        <CheckCircle className="w-4 h-4" />
+                                                    </button>
+                                                    {form.options.length > 2 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const newOpts = form.options.filter((_, idx) => idx !== i)
+                                                                setForm({
+                                                                    ...form,
+                                                                    options: newOpts,
+                                                                    correctAnswer: form.correctAnswer >= i ? form.correctAnswer - 1 : form.correctAnswer,
+                                                                })
+                                                            }}
+                                                            className="p-1.5 text-red-400 hover:text-red-300"
+                                                            title="Remove option"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="pt-3 border-t border-gray-700">
+                                        <div className="flex items-center gap-2 text-sm text-gray-300">
+                                            <CheckCircle className="w-4 h-4 text-green-400" />
+                                            <span>Selected correct answer: <span className="font-bold text-white">{String.fromCharCode(65 + form.correctAnswer)}</span></span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
 
                             {/* CODING Test Cases */}
                             {form.type === "CODING" && (
-                                <div>
-                                    <label className="block text-sm lg:text-base xl:text-lg font-medium text-gray-300 mb-2 lg:mb-3 xl:mb-4">
-                                        Test Cases
-                                    </label>
-                                    {form.testCases.length === 0 && (
-                                        <p className="text-gray-500 mb-2 lg:mb-3 xl:mb-4 text-sm lg:text-base">No test cases yet. Add one below.</p>
-                                    )}
-                                    {form.testCases.map((tc, i) => (
-                                        <div key={i} className="flex gap-2 lg:gap-3 xl:gap-4 mb-2 lg:mb-3 xl:mb-4 items-start">
-                                            <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-3 xl:gap-4">
-                                                <textarea
-                                                    value={tc.input}
-                                                    onChange={(e) => {
-                                                        const newCases = [...form.testCases]
-                                                        newCases[i].input = e.target.value
-                                                        setForm({ ...form, testCases: newCases })
-                                                    }}
-                                                    placeholder="Input"
-                                                    className="bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 resize-none text-sm lg:text-base"
-                                                    rows={2}
-                                                />
-                                                <textarea
-                                                    value={tc.expectedOutput}
-                                                    onChange={(e) => {
-                                                        const newCases = [...form.testCases]
-                                                        newCases[i].expectedOutput = e.target.value
-                                                        setForm({ ...form, testCases: newCases })
-                                                    }}
-                                                    placeholder="Expected Output"
-                                                    className="bg-gray-700/50 border border-gray-600 rounded-lg lg:rounded-xl px-3 lg:px-4 xl:px-6 py-2 lg:py-3 resize-none text-sm lg:text-base"
-                                                    rows={2}
-                                                />
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => setForm({ ...form, testCases: form.testCases.filter((_, idx) => idx !== i) })}
-                                                className="text-red-400 hover:text-red-300 pt-1 lg:pt-2"
-                                            >
-                                                <Trash2 className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6" />
-                                            </button>
-                                        </div>
-                                    ))}
+                                <div className="space-y-4 bg-gray-800/30 rounded-xl p-5 border border-gray-700">
+                                    <div className="flex justify-between items-center">
+                                        <label className="block text-lg font-semibold text-white">
+                                            Test Cases
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setForm({ ...form, testCases: [...form.testCases, { input: "", expectedOutput: "" }] })}
+                                            className="text-green-400 hover:text-green-300 flex items-center gap-2 text-sm font-medium px-3 py-1.5 bg-green-500/10 rounded-lg"
+                                        >
+                                            <Plus className="w-4 h-4" /> Add Test Case
+                                        </button>
+                                    </div>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => setForm({ ...form, testCases: [...form.testCases, { input: "", expectedOutput: "" }] })}
-                                        className="text-green-400 flex items-center gap-1 lg:gap-2 hover:underline text-sm lg:text-base"
-                                    >
-                                        <Plus className="w-4 h-4 lg:w-5 lg:h-5" /> Add Test Case
-                                    </button>
+                                    {form.testCases.length === 0 && (
+                                        <div className="text-center py-6 text-gray-400 bg-gray-800/20 rounded-lg">
+                                            <Code2 className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                                            <p className="text-sm">No test cases yet. Add at least one for validation.</p>
+                                        </div>
+                                    )}
+
+                                    <div className="space-y-4">
+                                        {form.testCases.map((tc, i) => (
+                                            <div key={i} className="bg-gray-700/30 rounded-lg p-4 space-y-3 border border-gray-600">
+                                                <div className="flex justify-between items-center">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm font-medium text-gray-300">Test Case #{i + 1}</span>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setForm({ ...form, testCases: form.testCases.filter((_, idx) => idx !== i) })}
+                                                        className="text-red-400 hover:text-red-300 p-1"
+                                                    >
+                                                        <Trash2 className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                                                    <div>
+                                                        <label className="block text-sm text-gray-400 mb-1">Input</label>
+                                                        <textarea
+                                                            value={tc.input}
+                                                            onChange={(e) => {
+                                                                const newCases = [...form.testCases]
+                                                                newCases[i].input = e.target.value
+                                                                setForm({ ...form, testCases: newCases })
+                                                            }}
+                                                            placeholder="e.g. [1,2,3] or 'hello'"
+                                                            className="w-full bg-gray-800/50 border border-gray-600 rounded px-3 py-2 text-sm text-white resize-none focus:outline-none focus:ring-1 focus:ring-green-500"
+                                                            rows={2}
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-sm text-gray-400 mb-1">Expected Output</label>
+                                                        <textarea
+                                                            value={tc.expectedOutput}
+                                                            onChange={(e) => {
+                                                                const newCases = [...form.testCases]
+                                                                newCases[i].expectedOutput = e.target.value
+                                                                setForm({ ...form, testCases: newCases })
+                                                            }}
+                                                            placeholder="e.g. 6 or 'HELLO'"
+                                                            className="w-full bg-gray-800/50 border border-gray-600 rounded px-3 py-2 text-sm text-white resize-none focus:outline-none focus:ring-1 focus:ring-green-500"
+                                                            rows={2}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
 
-                            <div className="flex gap-2 lg:gap-4 xl:gap-6 pt-4 lg:pt-6 xl:pt-8">
+                            {/* Action Buttons */}
+                            <div className="flex gap-4 pt-6 border-t border-gray-700">
                                 <button
                                     type="button"
                                     onClick={closeModal}
                                     disabled={submitting}
-                                    className="flex-1 py-2 lg:py-3 xl:py-4 rounded-lg lg:rounded-xl bg-gray-700 hover:bg-gray-600 font-bold text-sm lg:text-base xl:text-lg transition disabled:opacity-50"
+                                    className="flex-1 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 font-semibold text-base transition-all duration-200 disabled:opacity-50"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submitting || !form.title.trim()}
-                                    className="flex-1 py-2 lg:py-3 xl:py-4 rounded-lg lg:rounded-xl bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 font-bold text-sm lg:text-base xl:text-lg shadow-lg flex items-center justify-center gap-2 lg:gap-3 transition transform hover:scale-105 disabled:opacity-50"
+                                    className="flex-1 py-3 rounded-lg bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 font-semibold text-base flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
                                 >
-                                    <Save className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6" />
-                                    {submitting ? "Saving..." : editingQuestion ? "Update" : "Create"} Question
+                                    <Save className="w-5 h-5" />
+                                    {submitting ? "Saving..." : editingQuestion ? "Update Question" : "Create Question"}
                                 </button>
                             </div>
                         </form>

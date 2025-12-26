@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux"
 import { fetchLanguages } from "../../features/languages/languageActions"
-import { Globe } from "lucide-react"
+import { CheckCircle2, Globe } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { usePagination } from "../../hooks/usePagination"
 import SearchBar from "../../components/SearchBar"
@@ -12,6 +12,9 @@ const Languages = () => {
     const { items: languages, loading, error } = useAppSelector((state) => state.languages)
     const navigate = useNavigate() 
     
+    // Get user certificates from auth state
+    const { user } = useAppSelector((state) => state.auth)
+
     const [searchTerm, setSearchTerm] = useState("")
     const ITEMS_PER_PAGE = 5
         const {
@@ -31,12 +34,15 @@ const Languages = () => {
         dispatch(fetchLanguages()) 
     }, [dispatch])
 
-    const handleLanguageClick = (languageId: string, languageName: string) => {
-        // Navigate to questions page with language info
-        navigate(`/languages/${languageId}`, {
-            state: { languageName }
-        })
-    }
+    // Extract completed language IDs from user's certificates
+    const completedLanguageIds = user?.certificates?.map((cert: any) => {
+        if (typeof cert.language === "string") return cert.language
+        if (cert.language?._id) return cert.language._id
+        if (cert.languageId) return cert.languageId
+        return null
+    }).filter(Boolean) || []
+
+    const isCompleted = (languageId: string) => completedLanguageIds.includes(languageId)
 
     if (loading) {
         return (
@@ -86,45 +92,68 @@ const Languages = () => {
                 </div>
 
                 {/* Languages Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4 xl:gap-6">
-                    {paginatedLanguages.map((lang) => (
-                        <div
-                            key={lang._id}
-                            onClick={() => handleLanguageClick(lang._id, lang.name)}
-                            className="group relative bg-gray-800/40 backdrop-blur-sm border border-gray-700 rounded-xl lg:rounded-2xl xl:rounded-3xl overflow-hidden shadow-lg lg:shadow-xl xl:shadow-2xl hover:shadow-green-500/30 transition-all duration-500 hover:-translate-y-2 lg:hover:-translate-y-3 xl:hover:-translate-y-4 cursor-pointer"
-                        >
-                        <div className="h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 relative overflow-hidden">
-                        {lang.iconUrl ? (
-                            <img
-                            src={lang.iconUrl}
-                            alt={lang.name}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
-                        ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                            <Globe className="w-12 h-12 lg:w-16 lg:h-16 xl:w-20 xl:h-20 text-white/20" />
-                            </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        
-                            <div className="absolute bottom-2 lg:bottom-3 xl:bottom-4 left-2 lg:left-3 xl:left-4 right-2 lg:right-3 xl:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                <h3 className="text-base lg:text-lg xl:text-xl font-bold text-white mb-1 line-clamp-1">{lang.name}</h3>
-                                <p className="text-green-400 text-xs lg:text-sm font-medium">
-                                    {lang.questionCount || 0} quizzes
-                                </p>
-                            </div>
-                        </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6 xl:gap-8">
+                    {paginatedLanguages.map((lang) => {
+                        const completed = isCompleted(lang._id)
 
-                        <div className="p-3 lg:p-4 xl:p-6 text-center">
-                            <h3 className="text-sm lg:text-base xl:text-lg font-bold text-white group-hover:text-green-400 transition-colors line-clamp-1">
-                                {lang.name}
-                            </h3>
-                            <p className="text-gray-400 text-xs lg:text-sm mt-1">
-                                {lang.questionCount || 0} quizzes available
-                            </p>
-                        </div>
-                    </div>
-                    ))}
+                        return (
+                            <div
+                                key={lang._id}
+                                onClick={() =>
+                                    navigate(`/languages/${lang._id}`, {
+                                        state: { languageName: lang.name },
+                                    })
+                                }
+                                className={`
+                                    group relative rounded-2xl lg:rounded-3xl overflow-hidden
+                                    shadow-xl transition-all duration-500 cursor-pointer
+                                    hover:-translate-y-4 hover:shadow-2xl
+                                    ${
+                                        completed
+                                        ? "bg-gradient-to-br from-green-950/70 to-emerald-950/50 border-2 border-green-500/80"
+                                        : "bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-green-600/60"
+                                    }
+                                `}
+                            >
+                                {/* Image Section */}
+                                <div className="relative h-44 sm:h-48 lg:h-56 overflow-hidden">
+                                    {lang.iconUrl ? (
+                                        <img
+                                            src={lang.iconUrl}
+                                            alt={lang.name}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full bg-gradient-to-br from-purple-700 to-blue-800 flex items-center justify-center">
+                                            <Globe className="w-16 h-16 lg:w-20 lg:h-20 text-white/20" />
+                                        </div>
+                                    )}
+
+                                    {/* Completed Badge */}
+                                    {completed && (
+                                        <div className="absolute top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-2xl flex items-center gap-2 z-10 border border-green-400">
+                                            <CheckCircle2 size={18} className="fill-current" />
+                                            Completed
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="p-5 text-center bg-gray-900/50">
+                                    <h3
+                                        className={`
+                                            text-lg lg:text-xl font-semibold transition-colors
+                                            ${completed ? "text-green-400" : "text-white group-hover:text-green-400"}
+                                        `}
+                                    >
+                                        {lang.name}
+                                    </h3>
+                                    <p className="text-gray-400 text-sm mt-2">
+                                        {lang.questionCount || 0} quizzes available
+                                    </p>
+                                </div>
+                            </div>
+                        )
+                    })}
                 </div>
 
                 {paginatedLanguages.length === 0 ? (

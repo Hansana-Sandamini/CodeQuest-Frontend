@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/useAuth"
 import { updateUser, updateProfilePicture } from "../features/auth/authSlice"
 import { Camera, Save, Key, Award, Flame, Trophy, Shield, Users, BarChart } from "lucide-react"
 import { userApi } from "../api/userService"
+import { getMyProfile } from "../api/authService" 
 import swal from "../utils/swal"
 import type { IBadge, ICertificate } from "../types/User"
 import { Link } from "react-router-dom"
@@ -155,7 +156,7 @@ const Profile = () => {
         if (!user?.badges) return []
         try {
             if (Array.isArray(user.badges)) {
-                return user.badges;
+                return user.badges
             }
         } catch (err) {
             console.error("Error parsing badges:", err)
@@ -168,7 +169,7 @@ const Profile = () => {
         if (!user?.certificates) return []
         try {
             if (Array.isArray(user.certificates)) {
-                return user.certificates;
+                return user.certificates
             }
         } catch (err) {
             console.error("Error parsing certificates:", err)
@@ -189,6 +190,29 @@ const Profile = () => {
         window.open(url, "_blank")
     }
 
+    useEffect(() => {
+        if (!user?._id) return
+
+        const refreshUser = async () => {
+            try {
+                const freshUser = await getMyProfile()
+                dispatch(updateUser(freshUser))
+            } catch (err) {
+                console.error("Failed to refresh user profile:", err)
+            }
+        }
+        // Refresh immediately when user enters profile page
+        refreshUser()
+
+        // Refresh when user returns to this tab/window
+        const handleFocus = () => refreshUser()
+        window.addEventListener("focus", handleFocus)
+
+        return () => {
+            window.removeEventListener("focus", handleFocus)
+        }
+    }, [user?._id, dispatch])
+
     if (!user) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-8">
@@ -199,7 +223,7 @@ const Profile = () => {
                     <p className="text-xl text-gray-400">Please log in to view your profile</p>
                 </div>
             </div>
-        );
+        )
     }
 
     return (
@@ -337,12 +361,12 @@ const Profile = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => {
-                                                    setEditMode(false);
+                                                    setEditMode(false)
                                                     setFormData({
                                                         firstname: user?.firstname || "",
                                                         lastname: user?.lastname || "",
                                                         username: user?.username || "",
-                                                    });
+                                                    })
                                                 }}
                                                 className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition-colors disabled:opacity-50"
                                                 disabled={loading}
@@ -418,8 +442,8 @@ const Profile = () => {
                                         <button
                                             type="button"
                                             onClick={() => {
-                                                setShowPasswordForm(false);
-                                                setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+                                                setShowPasswordForm(false)
+                                                setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" })
                                             }}
                                             className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition-colors"
                                             disabled={loading}

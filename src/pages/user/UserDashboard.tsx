@@ -27,13 +27,13 @@ const UserDashboard = () => {
 
     useEffect(() => {
         if (!loading && stats && !isInitialized) {
-            setIsInitialized(true);
+            setIsInitialized(true)
         }
     }, [loading, stats, isInitialized])
 
     const displayStats = isInitialized ? stats : {
         currentStreak: `${user?.currentStreak || 0} days`,
-        totalLanguages: user?.lan?.length || 0,
+        totalLanguages: user?.certificates?.length || 0,
         allLanguagesCount: 0,
         totalQuestions: 0, 
         solvedQuestions: 0,
@@ -88,10 +88,10 @@ const UserDashboard = () => {
 
     const getDifficultyColor = (difficulty: string) => {
         switch (difficulty?.toLowerCase()) {
-            case 'easy': return 'text-green-400 bg-green-500/20';
-            case 'medium': return 'text-yellow-400 bg-yellow-500/20';
-            case 'hard': return 'text-red-400 bg-red-500/20';
-            default: return 'text-gray-400 bg-gray-500/20';
+            case 'easy': return 'text-green-400 bg-green-500/20'
+            case 'medium': return 'text-yellow-400 bg-yellow-500/20'
+            case 'hard': return 'text-red-400 bg-red-500/20'
+            default: return 'text-gray-400 bg-gray-500/20'
         }
     }
 

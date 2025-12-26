@@ -41,8 +41,8 @@ export const useUserProfile = () => {
     }, [profile])
 
     const updateProfilePicture = useCallback(async (imageFile: File) => {
-        setLoading(true);
-        setError(null);
+        setLoading(true)
+        setError(null)
         try {
             const result = await userApi.updateProfilePicture(imageFile)
             // Update local state

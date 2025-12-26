@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useParams, useLocation, Link } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../../hooks/redux"
 import { fetchQuestionsByLanguage } from "../../features/questions/questionActions"
-import { ArrowLeft, Code2, CheckSquare, ArrowRight, CheckCircle } from "lucide-react"
+import { ArrowLeft, Code2, CheckSquare, ArrowRight, CheckCircle, Clock } from "lucide-react"
 import { type Question, Difficulty, QuestionType } from "../../types/Question"
 import { progressApi } from "../../api/progress" 
 import { useState } from "react"
@@ -20,7 +20,7 @@ const LanguageQuestions = () => {
     
     const [searchTerm, setSearchTerm] = useState("")
     const ITEMS_PER_PAGE = 3
-    const [completedQuestions, setCompletedQuestions] = useState<Set<string>>(new Set())
+    const [progressMap, setProgressMap] = useState<Map<string, any>>(new Map()) 
     const {
         currentPage,
         setCurrentPage,
@@ -44,22 +44,85 @@ const LanguageQuestions = () => {
         const fetchUserProgress = async () => {
             try {
                 const progressList = await progressApi.getAll()
-                const completedSet = new Set<string>()
+                const progressData = new Map<string, any>()
                 
                 progressList.forEach((p: any) => {
-                    if (p.status === 'COMPLETED' && p.isCorrect) {
-                        completedSet.add(p.question._id)
+                    if (p.question && p.question._id) {
+                        progressData.set(p.question._id, p)
                     }
                 })
                 
-                setCompletedQuestions(completedSet)
+                setProgressMap(progressData)
             } catch (err) {
                 console.error("Failed to fetch progress:", err)
             }
         }
         
         fetchUserProgress()
-    }, []) 
+    }, [])
+
+    const getQuestionStatus = (questionId: string) => {
+        const progress = progressMap.get(questionId)
+        
+        if (!progress) {
+            return 'not-attempted' 
+        }
+        if (progress.isCorrect && progress.status === 'COMPLETED') {
+            return 'completed'
+        }
+        if (progress.attempts > 0) {
+            return 'attempted' 
+        }
+        return 'not-attempted'
+    }
+
+    const getStatusClass = (status: string) => {
+        switch (status) {
+            case 'completed':
+                return 'bg-green-500/10 border-green-500/50 hover:border-green-400/70 hover:shadow-green-500/20'
+            case 'attempted':
+                return 'bg-yellow-500/10 border-yellow-500/50 hover:border-yellow-400/70 hover:shadow-yellow-500/20'
+            case 'not-attempted':
+            default:
+                return 'bg-gray-800/40 border-gray-700 hover:border-green-500/50 hover:bg-gray-800/60 hover:shadow-green-500/10'
+        }
+    }
+
+    const getStatusIcon = (status: string) => {
+        switch (status) {
+            case 'completed':
+                return <CheckCircle className="w-3 h-3 lg:w-4 lg:h-4 xl:w-4.5 xl:h-4.5 text-green-400" />
+            case 'attempted':
+                return <Clock className="w-3 h-3 lg:w-4 lg:h-4 xl:w-4.5 xl:h-4.5 text-yellow-400" />
+            case 'not-attempted':
+            default:
+                return null
+        }
+    }
+
+    const getStatusText = (status: string) => {
+        switch (status) {
+            case 'completed':
+                return "Solved"
+            case 'attempted':
+                return "In Progress"
+            case 'not-attempted':
+            default:
+                return "Start Challenge"
+        }
+    }
+
+    const getTitleColorClass = (status: string) => {
+        switch (status) {
+            case 'completed':
+                return 'text-green-300 group-hover:text-green-200'
+            case 'attempted':
+                return 'text-yellow-300 group-hover:text-yellow-200'
+            case 'not-attempted':
+            default:
+                return 'text-white group-hover:text-green-400'
+        }
+    }
 
     // Color for difficulty badge
     const getDifficultyClass = (difficulty: Difficulty) => {
@@ -158,7 +221,7 @@ const LanguageQuestions = () => {
                     /* Questions Grid */
                     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6 xl:gap-8">
                     {paginatedQuestions.map((q: Question, index) => {
-                        const isCompleted = completedQuestions.has(q._id)
+                        const status = getQuestionStatus(q._id)
                         
                         return (
                             <Link
@@ -173,10 +236,7 @@ const LanguageQuestions = () => {
                             >
                                 <div className={`h-full backdrop-blur-sm border rounded-xl lg:rounded-2xl p-4 lg:p-5 xl:p-7
                                                 transition-all duration-300 hover:-translate-y-1 lg:hover:-translate-y-2 hover:shadow-xl lg:hover:shadow-2xl
-                                                ${isCompleted 
-                                                    ? 'bg-green-500/10 border-green-500/50 hover:border-green-400/70 hover:shadow-green-500/20' 
-                                                    : 'bg-gray-800/40 border-gray-700 hover:border-green-500/50 hover:bg-gray-800/60 hover:shadow-green-500/10'
-                                                }`}
+                                                ${getStatusClass(status)}`}
                                 >
                                     {/* Top: Index + Difficulty */}
                                     <div className="flex justify-between items-center mb-3 lg:mb-4 xl:mb-5">
@@ -201,10 +261,7 @@ const LanguageQuestions = () => {
 
                                     {/* Title */}
                                     <h3 className={`text-base lg:text-lg xl:text-xl font-bold mb-2 lg:mb-3 transition-colors line-clamp-2
-                                                    ${isCompleted 
-                                                        ? 'text-green-300 group-hover:text-green-200' 
-                                                        : 'text-white group-hover:text-green-400'
-                                                    }`}
+                                                    ${getTitleColorClass(status)}`}
                                     >
                                         {q.title}
                                     </h3>
@@ -216,14 +273,14 @@ const LanguageQuestions = () => {
 
                                     {/* CTA */}
                                     <div className="text-right">
-                                        {isCompleted ? (
-                                            <span className="inline-flex items-center gap-1 lg:gap-2 text-green-400 font-medium text-xs lg:text-sm">
-                                                <CheckCircle className="w-3 h-3 lg:w-4 lg:h-4 xl:w-4.5 xl:h-4.5 text-green-400" />
-                                                Solved
+                                        {status !== 'not-attempted' ? (
+                                            <span className="inline-flex items-center gap-1 lg:gap-2 font-medium text-xs lg:text-sm">
+                                                {getStatusIcon(status)}
+                                                {getStatusText(status)}
                                             </span>
                                         ) : (
-                                            <span className="inline-flex items-center gap-1 lg:gap-2 text-green-400 font-medium text-xs lg:text-sm group-hover:gap-2 lg:group-hover:gap-3 xl:group-hover:gap-4 transition-all">
-                                                Start Challenge
+                                            <span className="inline-flex items-center gap-1 lg:gap-2 text-blue-400 font-medium text-xs lg:text-sm group-hover:gap-2 lg:group-hover:gap-3 xl:group-hover:gap-4 transition-all">
+                                                {getStatusText(status)}
                                                 <ArrowRight className="w-3 h-3 lg:w-4 lg:h-4 xl:w-4.5 xl:h-4.5 group-hover:translate-x-1 lg:group-hover:translate-x-2 transition-transform" />
                                             </span>
                                         )}

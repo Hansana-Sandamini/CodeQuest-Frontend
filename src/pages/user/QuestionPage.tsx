@@ -180,7 +180,7 @@ const QuestionPage = () => {
             html: `
                 <div style="text-align: center; padding: 1.5rem;">
                     <div style="font-size: 5.5rem; margin-bottom: 1rem;">📜</div>
-                    <h2 style="margin-bottom: 1rem; color: #2c3e50;">Congratulations!</h2>
+                    <h2 style="margin-bottom: 1rem; color: #ffd700;">Congratulations!</h2>
                     <p style="font-size: 1.3rem; margin-bottom: 1.5rem;">
                         You have mastered <strong>${languageName}</strong>!<br>
                         100% completion achieved 🎉
@@ -282,6 +282,9 @@ const QuestionPage = () => {
                 await showCertificatePopup(languageName)
             }
         }
+        
+        const finalFreshUser = await getMyProfile()
+        dispatch(updateUser(finalFreshUser))
     }
 
     const isLastQuestion = useCallback(() => {
@@ -323,7 +326,7 @@ const QuestionPage = () => {
                 await swal.fire({
                     icon: "success",
                     title: "Correct! 🎉",
-                    text: `+${res.pointsEarned} points earned!${last ? "\nYou've completed all questions in this language!" : ""}`,
+                    text: `+${res.pointsEarned} points earned!`,
                     confirmButtonText: last ? "Great!" : "Next Question",
                 }).then(() => {
                     if (!last) {
@@ -557,123 +560,187 @@ const QuestionPage = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-                    {/* Left: Question & Options */}
-                    <div className="space-y-8">
-
-                        <div className="bg-gray-800/40 backdrop-blur border border-gray-700 rounded-2xl p-8">
-                            <h2 className="text-2xl font-bold mb-6">{question.title}</h2>
-                            <div className="text-gray-300 whitespace-pre-wrap">{question.description}</div>
+                {/* MAIN CONTENT - CONDITIONAL LAYOUT */}
+                {question.type === QuestionType.MCQ ? (
+                    /* MCQ LAYOUT - Centered */
+                    <div className="max-w-3xl mx-auto">
+                        {/* Question Card */}
+                        <div className="bg-gray-800/40 backdrop-blur border border-gray-700 rounded-2xl p-6 mb-8">
+                            <div className="text-gray-300 whitespace-pre-wrap leading-relaxed">
+                                {question.description}
+                            </div>
                         </div>
 
+                        {/* Hint Section */}
                         <button
                             onClick={handleGetHint}
                             disabled={hintLoading}
-                            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 py-4 rounded-2xl font-bold text-lg shadow-xl"
+                            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 py-3 px-4 rounded-xl font-bold text-lg shadow-xl mb-8"
                         >
                             {hintLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Sparkles className="w-6 h-6" />}
                             {hintLoading ? "Loading Hint..." : "Reveal Hint"}
                         </button>
 
                         {hint && (
-                            <div className="bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border-2 border-purple-500/50 rounded-2xl p-6 text-purple-300">
-                                <strong className="flex items-center gap-3 text-xl mb-3">
-                                    <HelpCircle className="w-7 h-7" /> Hint
+                            <div className="bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border-2 border-purple-500/50 rounded-xl p-5 text-purple-300 mb-8">
+                                <strong className="flex items-center gap-2 text-lg mb-2">
+                                    <HelpCircle className="w-5 h-5" /> Hint
                                 </strong>
-                                <p>{hint}</p>
+                                <p className="text-sm">{hint}</p>
                             </div>
                         )}
 
                         {/* MCQ Options */}
-                        {question.type === QuestionType.MCQ && question.options && (
-                            <div className="space-y-6">
-                                <div className="flex justify-between items-center">
-                                    <h3 className="text-xl font-bold">Choose your answer:</h3>
-                                    {!isCorrectlyCompleted && (
-                                        <button onClick={handleReset} className="flex items-center gap-2 text-sm bg-gray-700/50 hover:bg-gray-700 px-4 py-2 rounded-lg">
-                                            <RefreshCw className="w-4 h-4" /> Reset
-                                        </button>
-                                    )}
-                                </div>
-
-                                {question.options.map((opt, i) => (
-                                    <label
-                                        key={i}
-                                        className={`block p-6 rounded-2xl border-2 cursor-pointer transition-all
-                                            ${isCorrectlyCompleted && selectedOption === i && userProgress?.isCorrect
-                                                ? "border-green-500 bg-green-500/20"
-                                                : !isCorrectlyCompleted && selectedOption === i
-                                                ? "border-blue-500 bg-blue-500/10"
-                                                : userProgress?.isCorrect === false && selectedOption === i
-                                                ? "border-red-500 bg-red-500/20"
-                                                : "border-gray-700 hover:border-gray-600 hover:bg-gray-800/40"
-                                            }`}
+                        <div className="space-y-4 mb-8">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-xl font-bold">Choose your answer:</h3>
+                                {!isCorrectlyCompleted && (
+                                    <button 
+                                        onClick={handleReset} 
+                                        className="flex items-center gap-2 text-sm bg-gray-700/50 hover:bg-gray-700 px-3 py-2 rounded-lg transition-colors"
                                     >
-                                        <input
-                                            type="radio"
-                                            name="option"
-                                            className="hidden"
-                                            checked={selectedOption === i}
-                                            onChange={() => !isCorrectlyCompleted && setSelectedOption(i)}
-                                            disabled={isCorrectlyCompleted}
-                                        />
-
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-lg">{opt}</span>
-                                            {selectedOption === i && userProgress && (
-                                                userProgress.isCorrect ? (
-                                                    <CheckCircle className="w-8 h-8 text-green-400" />
-                                                ) : (
-                                                    <XCircle className="w-8 h-8 text-red-400" />
-                                                )
-                                            )}
-                                        </div>
-                                    </label>
-                                ))}
-
-                                <button
-                                    onClick={handleMCQSubmit}
-                                    disabled={selectedOption === null || submitLoading || isCorrectlyCompleted}
-                                    className="w-full py-5 rounded-2xl bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 font-bold text-xl disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl"
-                                >
-                                    {submitLoading ? <Loader2 className="w-7 h-7 animate-spin" /> : <CheckCircle className="w-7 h-7" />}
-                                    {isCorrectlyCompleted ? "Completed" : "Submit Answer"}
-                                </button>
+                                        <RefreshCw className="w-4 h-4" /> Reset
+                                    </button>
+                                )}
                             </div>
-                        )}
 
-                        {/* Test Cases */}
-                        {question.type === QuestionType.CODING && question.testCases && (
-                            <div className="space-y-4">
-                                <h3 className="text-xl font-bold flex items-center gap-3">
-                                    <Code2 className="w-6 h-6" /> Test Cases
-                                </h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {question.testCases.map((tc, i) => (
-                                        <div
+                            {/* Check if options exist */}
+                            {question.options && question.options.length > 0 ? (
+                                <div className="grid grid-cols-1 gap-3">
+                                    {question.options.map((opt, i) => (
+                                        <label
                                             key={i}
-                                            onClick={() => setActiveTestCase(i)}
-                                            className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                                                activeTestCase === i
+                                            className={`block p-4 rounded-xl border-2 cursor-pointer transition-all duration-200
+                                                ${isCorrectlyCompleted && selectedOption === i && userProgress?.isCorrect
                                                     ? "border-green-500 bg-green-500/10"
-                                                    : "border-gray-700 hover:border-gray-600"
-                                            }`}
+                                                    : !isCorrectlyCompleted && selectedOption === i
+                                                    ? "border-blue-500 bg-blue-500/10"
+                                                    : userProgress?.isCorrect === false && selectedOption === i
+                                                    ? "border-red-500 bg-red-500/10"
+                                                    : "border-gray-700 hover:border-gray-600 hover:bg-gray-800/30"
+                                                }`}
                                         >
-                                            <strong className="block mb-2">Case {i + 1}</strong>
-                                            <pre className="text-xs bg-black/40 p-3 rounded font-mono overflow-x-auto">
-                                                <div><span className="text-gray-500">Input:</span> {tc.input || "<empty>"}</div>
-                                                <div className="mt-2"><span className="text-gray-500">Expected:</span> {tc.expectedOutput || "<empty>"}</div>
-                                            </pre>
-                                        </div>
+                                            <input
+                                                type="radio"
+                                                name="option"
+                                                className="hidden"
+                                                checked={selectedOption === i}
+                                                onChange={() => !isCorrectlyCompleted && setSelectedOption(i)}
+                                                disabled={isCorrectlyCompleted}
+                                            />
+
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 font-bold text-sm
+                                                        ${isCorrectlyCompleted && selectedOption === i && userProgress?.isCorrect
+                                                            ? "border-green-500 bg-green-500/20 text-green-400"
+                                                            : !isCorrectlyCompleted && selectedOption === i
+                                                            ? "border-blue-500 bg-blue-500/20 text-blue-400"
+                                                            : userProgress?.isCorrect === false && selectedOption === i
+                                                            ? "border-red-500 bg-red-500/20 text-red-400"
+                                                            : "border-gray-600 bg-gray-800/50 text-gray-400"
+                                                        }`}
+                                                    >
+                                                        {String.fromCharCode(65 + i)}
+                                                    </div>
+                                                    <span className="text-base">{opt}</span>
+                                                </div>
+                                                {selectedOption === i && userProgress && (
+                                                    userProgress.isCorrect ? (
+                                                        <CheckCircle className="w-6 h-6 text-green-400" />
+                                                    ) : (
+                                                        <XCircle className="w-6 h-6 text-red-400" />
+                                                    )
+                                                )}
+                                            </div>
+                                        </label>
                                     ))}
                                 </div>
+                            ) : (
+                                <div className="text-center py-8 text-gray-400">
+                                    No options available for this question.
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Submit Button */}
+                        <button
+                            onClick={handleMCQSubmit}
+                            disabled={selectedOption === null || submitLoading || isCorrectlyCompleted}
+                            className="w-full py-4 rounded-xl bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 font-bold text-lg disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl transition-all duration-300"
+                        >
+                            {submitLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <CheckCircle className="w-6 h-6" />}
+                            {isCorrectlyCompleted ? "Completed" : "Submit Answer"}
+                        </button>
+
+                        {/* Result Display */}
+                        {showResult && (
+                            <div className={`mt-6 p-5 rounded-xl text-center text-xl font-bold border-2 ${
+                                isCorrect
+                                    ? "bg-green-600/20 border-green-500 text-green-400"
+                                    : "bg-red-600/20 border-red-500 text-red-400"
+                            }`}>
+                                {isCorrect ? "✅ Correct Answer! 🎉" : "❌ Incorrect — Try Again!"}
                             </div>
                         )}
                     </div>
+                ) : (
+                    /* CODING LAYOUT - Two Columns */
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Left: Question & Options */}
+                        <div className="space-y-8">
+                            <div className="bg-gray-800/40 backdrop-blur border border-gray-700 rounded-2xl p-8">
+                                <div className="text-gray-300 whitespace-pre-wrap">{question.description}</div>
+                            </div>
 
-                    {/* Right Column - Code Editor */}
-                    {question.type === QuestionType.CODING && (
+                            <button
+                                onClick={handleGetHint}
+                                disabled={hintLoading}
+                                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 py-4 rounded-2xl font-bold text-lg shadow-xl"
+                            >
+                                {hintLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Sparkles className="w-6 h-6" />}
+                                {hintLoading ? "Loading Hint..." : "Reveal Hint"}
+                            </button>
+
+                            {hint && (
+                                <div className="bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border-2 border-purple-500/50 rounded-2xl p-6 text-purple-300">
+                                    <strong className="flex items-center gap-3 text-xl mb-3">
+                                        <HelpCircle className="w-7 h-7" /> Hint
+                                    </strong>
+                                    <p>{hint}</p>
+                                </div>
+                            )}
+
+                            {/* Test Cases */}
+                            {question.type === QuestionType.CODING && question.testCases && (
+                                <div className="space-y-4">
+                                    <h3 className="text-xl font-bold flex items-center gap-3">
+                                        <Code2 className="w-6 h-6" /> Test Cases
+                                    </h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {question.testCases.map((tc, i) => (
+                                            <div
+                                                key={i}
+                                                onClick={() => setActiveTestCase(i)}
+                                                className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                                                    activeTestCase === i
+                                                        ? "border-green-500 bg-green-500/10"
+                                                        : "border-gray-700 hover:border-gray-600"
+                                                }`}
+                                            >
+                                                <strong className="block mb-2">Case {i + 1}</strong>
+                                                <pre className="text-xs bg-black/40 p-3 rounded font-mono overflow-x-auto">
+                                                    <div><span className="text-gray-500">Input:</span> {tc.input || "<empty>"}</div>
+                                                    <div className="mt-2"><span className="text-gray-500">Expected:</span> {tc.expectedOutput || "<empty>"}</div>
+                                                </pre>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Right Column - Code Editor */}
                         <div className="space-y-6">
                             <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
                                 <h3 className="text-2xl font-bold flex items-center gap-3">
@@ -728,8 +795,8 @@ const QuestionPage = () => {
                                 </div>
                             )}
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
         </div>
     )

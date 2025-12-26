@@ -34,7 +34,7 @@ export function useRunCode() {
                 if (status === 1 || status === 2) {
                     // In Queue / Processing
                     await new Promise((r) => setTimeout(r, 1200))
-                    continue;
+                    continue
                 }
 
                 setResult(res)

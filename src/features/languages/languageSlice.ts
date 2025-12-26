@@ -9,12 +9,14 @@ import {
 
 interface LanguageState {
     items: ILanguage[]
+    completed: string[]
     loading: boolean
     error: string | null
 }
 
 const initialState: LanguageState = {
     items: [],
+    completed: [],
     loading: false,
     error: null
 }
@@ -36,7 +38,8 @@ const languageSlice = createSlice({
         })
         .addCase(fetchLanguages.fulfilled, (state, action) => {
             state.loading = false
-            state.items = action.payload
+            state.items = action.payload.languages
+            state.completed = action.payload.completedIds
         })
         .addCase(fetchLanguages.rejected, (state, action) => {
             state.loading = false
