@@ -12,7 +12,8 @@ export default defineConfig({
     proxy: {
       // This magically forwards all /api/v1 calls to backend
       "/api/v1": {
-        target: "http://localhost:5000",
+        // target: "http://localhost:5000",
+        target: "https://code-quest-be-three.vercel.app",
         changeOrigin: true,
         secure: false,
       },
