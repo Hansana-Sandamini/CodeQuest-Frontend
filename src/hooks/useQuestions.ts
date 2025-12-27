@@ -8,6 +8,9 @@ import {
     deleteQuestion,
 } from "../features/questions/questionActions"
 
+import { useQuery } from '@tanstack/react-query'
+import { dailyQuestionApi } from '../api/dailyQuestion' 
+
 export const useQuestions = () => {
     const dispatch = useDispatch<AppDispatch>()
 
@@ -33,4 +36,14 @@ export const useQuestions = () => {
 
         deleteQuestion: (id: string) => dispatch(deleteQuestion(id)),
     }
+}
+
+// Daily question with React Query
+export const useDailyQuestion = () => {
+    return useQuery({
+        queryKey: ['daily-question'],
+        queryFn: dailyQuestionApi.getToday,
+        staleTime: 24 * 60 * 60 * 1000, 
+        gcTime: 24 * 60 * 60 * 1000,
+    })
 }

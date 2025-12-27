@@ -11,6 +11,7 @@ import swal from "../../utils/swal"
 import confetti from "canvas-confetti"
 import { useDispatch } from "react-redux"
 import { updateUser } from "../../features/auth/authSlice"
+import axios from "axios"
 
 const QuestionPage = () => {
     const { id } = useParams<{ id: string }>()
@@ -20,6 +21,7 @@ const QuestionPage = () => {
     const languageName = (location.state as any)?.languageName || "Language"
     const questionTitle = (location.state as any)?.questionTitle || "Question"
     const questionsList = (location.state as any)?.questions || []
+    const isDailyQuestion = location.pathname === "/daily-question"
 
     const [question, setQuestion] = useState<Question | null>(null)
     const [loading, setLoading] = useState(true)
@@ -104,13 +106,39 @@ const QuestionPage = () => {
     const fetchQuestion = useCallback(async () => {
         try {
             setLoading(true)
-            const res = await questionApi.getOne(id!)
+
+            let res
+            let currentQuestionId = id
+
+            // Handle daily question case
+            if (isDailyQuestion) {
+                // Get today's daily question first
+                const dailyRes = await axios.get('/api/v1/daily-question', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+                    }
+                })
+
+                const dailyQuestion = dailyRes.data.question
+
+                if (!dailyQuestion?._id) {
+                    throw new Error("No daily question available today")
+                }
+
+                currentQuestionId = dailyQuestion._id
+            }
+            if (!currentQuestionId) {
+                throw new Error("No question ID available")
+            }
+
+            res = await questionApi.getOne(currentQuestionId)
+
             const q = res.data.data
             setQuestion(q)
 
             const progressRes = await progressApi.getAll()
             const progressList = Array.isArray(progressRes) ? progressRes : (progressRes.data?.data || [])
-            const thisProgress = progressList.find((p: any) => p.question._id === id)
+            const thisProgress = progressList.find((p: any) => p.question._id === currentQuestionId)
             setUserProgress(thisProgress || null)
 
             if (thisProgress?.isCorrect) {
@@ -148,17 +176,24 @@ const QuestionPage = () => {
 
                 setCode(thisProgress?.codeSolution || template)
             }
-        } catch (err) {
-            console.error("Failed to load question")
-            swal.fire("Error", "Could not load question", "error")
+        } catch (err: any) {
+            console.error("Failed to load question", err)
+            swal.fire("Error", err.message || "Could not load question", "error")
+
+            // If daily question failed - go back to dashboard
+            if (isDailyQuestion) {
+                navigate("/dashboard") 
+            }
         } finally {
             setLoading(false)
         }
-    }, [id, questionsList])
+    }, [id, questionsList, isDailyQuestion, navigate])
 
     useEffect(() => {
-        if (id) fetchQuestion()
-    }, [id, fetchQuestion])
+        if (isDailyQuestion || id) {
+            fetchQuestion()
+        }
+    }, [fetchQuestion, isDailyQuestion, id])
 
     const handleGetHint = async () => {
         setHintLoading(true)
@@ -396,7 +431,7 @@ const QuestionPage = () => {
                 await swal.fire({
                     icon: "success",
                     title: "All Tests Passed! 🚀",
-                    text: `+${res.pointsEarned} points earned!${last ? "\nYou've completed all questions in this language!" : ""}`,
+                    text: `+${res.pointsEarned} points earned!`,
                     confirmButtonText: last ? "Great!" : "Next Question",
                 }).then(() => {
                     if (!last) {
@@ -546,7 +581,7 @@ const QuestionPage = () => {
                 {/* Title */}
                 <div className="text-center mb-12">
                     <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-                        {questionTitle}
+                        {isDailyQuestion ? "Daily Challenge" : questionTitle}
                     </h1>
                     <div className="flex flex-wrap justify-center gap-4 mt-4 text-gray-400">
                         <span className="flex items-center gap-2"><Code2 className="w-5 h-5" /> {languageName}</span>

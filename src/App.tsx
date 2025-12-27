@@ -47,6 +47,7 @@ export default function App() {
                         <Route path="/languages" element={<Languages />} />
                         <Route path="/languages/:languageId" element={<LanguageQuestions />} />
                         <Route path="/question/:id" element={<QuestionPage />} />
+                        <Route path="/daily-question" element={<QuestionPage />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/leaderboard/me" element={<Leaderboard />} />
                         

@@ -238,7 +238,7 @@ const UserDashboard = () => {
                             Solve today's question to keep your streak alive and earn bonus points.
                         </p>
                         <button
-                            onClick={() => navigate("/questions/daily")}
+                            onClick={() => navigate("/daily-question")}   
                             className="w-full bg-white text-gray-900 font-bold py-3 px-6 rounded-lg hover:scale-105 transition-transform duration-300"
                         >
                             Start Solving Now
