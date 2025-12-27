@@ -11,7 +11,7 @@ import swal from "../../utils/swal"
 import confetti from "canvas-confetti"
 import { useDispatch } from "react-redux"
 import { updateUser } from "../../features/auth/authSlice"
-import axios from "axios"
+import { useDailyQuestion } from "../../hooks/useQuestions"
 
 const QuestionPage = () => {
     const { id } = useParams<{ id: string }>()
@@ -22,6 +22,7 @@ const QuestionPage = () => {
     const questionTitle = (location.state as any)?.questionTitle || "Question"
     const questionsList = (location.state as any)?.questions || []
     const isDailyQuestion = location.pathname === "/daily-question"
+    const { data: dailyQuestion, isLoading: dailyLoading } = useDailyQuestion()
 
     const [question, setQuestion] = useState<Question | null>(null)
     const [loading, setLoading] = useState(true)
@@ -112,19 +113,11 @@ const QuestionPage = () => {
 
             // Handle daily question case
             if (isDailyQuestion) {
-                // Get today's daily question first
-                const dailyRes = await axios.get('/api/v1/daily-question', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token') || ''}`
-                    }
-                })
-
-                const dailyQuestion = dailyRes.data.question
+                if (dailyLoading) return
 
                 if (!dailyQuestion?._id) {
                     throw new Error("No daily question available today")
                 }
-
                 currentQuestionId = dailyQuestion._id
             }
             if (!currentQuestionId) {
