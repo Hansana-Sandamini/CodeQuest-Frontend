@@ -180,7 +180,7 @@ const QuestionPage = () => {
         } finally {
             setLoading(false)
         }
-    }, [id, questionsList, isDailyQuestion, navigate])
+    }, [id, questionsList, isDailyQuestion, dailyQuestion, dailyLoading, navigate]) 
 
     useEffect(() => {
         if (isDailyQuestion || id) {
