@@ -43,7 +43,11 @@ export const useDailyQuestion = () => {
     return useQuery({
         queryKey: ['daily-question'],
         queryFn: dailyQuestionApi.getToday,
-        staleTime: 24 * 60 * 60 * 1000, 
+        staleTime: 24 * 60 * 60 * 1000,
         gcTime: 24 * 60 * 60 * 1000,
+        retry: false,                   
+        retryOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
     })
 }

@@ -183,10 +183,22 @@ const QuestionPage = () => {
     }, [id, questionsList, isDailyQuestion, dailyQuestion, dailyLoading, navigate]) 
 
     useEffect(() => {
-        if (isDailyQuestion || id) {
+        // Normal question → fetch immediately if we have ID
+        if (!isDailyQuestion && id) {
+            fetchQuestion()
+            return
+        }
+        // Daily question → fetch ONLY when React Query is ready
+        if (isDailyQuestion && !dailyLoading && dailyQuestion?._id) {
             fetchQuestion()
         }
-    }, [fetchQuestion, isDailyQuestion, id])
+    }, [
+        isDailyQuestion,
+        id,
+        dailyLoading,          
+        dailyQuestion?._id,     
+        fetchQuestion          
+    ])
 
     const handleGetHint = async () => {
         setHintLoading(true)
