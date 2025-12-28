@@ -42,11 +42,19 @@ export const useQuestions = () => {
 export const useDailyQuestion = () => {
     return useQuery({
         queryKey: ['daily-question'],
-        queryFn: dailyQuestionApi.getToday,
+        queryFn: async () => {
+            try {
+                const response = await dailyQuestionApi.getToday()
+                return response.question || response.data || response
+            } catch (error) {
+                console.error("Daily question fetch error:", error)
+                return null   // Return null instead of throwing
+            }
+        },
         staleTime: 24 * 60 * 60 * 1000,
         gcTime: 24 * 60 * 60 * 1000,
-        retry: false,                   
-        retryOnMount: false,
+        retry: 1,
+        retryDelay: 2000,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
     })
