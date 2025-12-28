@@ -315,7 +315,7 @@ const QuestionsByLanguage = () => {
                             {paginatedQuestions.map((q) => (
                                 <div
                                     key={q._id}
-                                    className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl lg:rounded-2xl xl:rounded-3xl overflow-hidden shadow-lg lg:shadow-xl xl:shadow-2xl hover:shadow-green-500/30 transition-all duration-500 hover:-translate-y-2 lg:hover:-translate-y-3 xl:hover:-translate-y-4"
+                                    className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl lg:rounded-2xl xl:rounded-3xl overflow-hidden shadow-lg lg:shadow-xl xl:shadow-2xl hover:shadow-green-500/30 transition-all duration-300 hover:-translate-y-1 lg:hover:-translate-y-2 xl:hover:-translate-y-2"
                                 >
                                     <div className="absolute top-2 lg:top-3 xl:top-4 left-2 lg:left-3 xl:left-4 z-10">
                                         <span className={`px-2 lg:px-3 xl:px-4 py-1 lg:py-1.5 xl:py-2 rounded-full text-xs lg:text-sm font-bold ${
