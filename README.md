@@ -1,5 +1,7 @@
 # CodeQuest Frontend 🎨
 
+🔗 **Backend Repository:** https://github.com/Hansana-Sandamini/CodeQuest-Backend
+
 ## 📌 Project Overview
 
 **CodeQuest** is an interactive coding practice and learning platform where users can solve coding and MCQ questions across multiple programming languages, earn badges and certificates, compete on leaderboards, and receive AI-powered hints.
