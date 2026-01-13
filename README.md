@@ -187,3 +187,6 @@ Reveal AI Hint
 
 User Profile
 <img width="1894" height="1077" alt="user_profile" src="https://github.com/user-attachments/assets/dcf311c6-02fe-4308-8002-17167cbf371a" />
+
+Leaderboard
+<img width="1894" height="1077" alt="leaderboard" src="https://github.com/user-attachments/assets/de487b9b-9f08-425e-b0e6-171a06bb738d" />
