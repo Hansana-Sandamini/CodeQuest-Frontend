@@ -130,3 +130,60 @@ CODEQUEST-FE/
 5. Set build command: `npm run build`.
 6. Output directory: `dist`.
 7. Deploy and access the live frontend URL.
+
+---
+
+## 🖼️ Application Screenshots
+
+📸 Screenshots of key pages and functionalities of CodeQuest
+
+### 🏠 Public Pages
+
+Home Page
+<img width="1894" height="1077" alt="home" src="https://github.com/user-attachments/assets/564f00a4-4f9a-4f73-9993-09f601f1501b" />
+
+Register Page
+<img width="1894" height="1077" alt="register" src="https://github.com/user-attachments/assets/8499413c-1c59-4083-b6d7-5f1d836d7c0f" />
+
+Login Page
+<img width="1894" height="1077" alt="login" src="https://github.com/user-attachments/assets/e5e6037d-5a3a-47ab-9e64-cad0440be7f2" />
+
+### 🛡️ Admin Panel
+
+Admin Dashboard
+<img width="1894" height="1077" alt="admin_dashboard" src="https://github.com/user-attachments/assets/69c52653-73e0-4d28-bacd-4e70fe4276f0" />
+
+Manage Languages
+<img width="1902" height="1076" alt="admin_languages" src="https://github.com/user-attachments/assets/f7092f2f-ed18-4e99-aaf1-ef62f6cf6dce" />
+
+Manage Questions
+<img width="1902" height="1076" alt="admin_questions" src="https://github.com/user-attachments/assets/3e992a33-88f3-4c61-910c-b3201e047950" />
+
+Add MCQ Question
+<img width="1898" height="1082" alt="admin_add_mcq_question" src="https://github.com/user-attachments/assets/5db8531e-b5b3-44b0-8c40-59f44a91a11b" />
+
+Add Coding Question
+<img width="1882" height="1081" alt="admin_add_coding_question" src="https://github.com/user-attachments/assets/7c79e34c-220f-4682-bebb-98dd9889a165" />
+
+Manage Users
+<img width="1894" height="1077" alt="users" src="https://github.com/user-attachments/assets/50ef2ec2-cf5e-4f94-8d14-656c3e9c901b" />
+
+### 👤 User Panel
+
+User Dashboard
+<img width="1894" height="1077" alt="user_dashboard" src="https://github.com/user-attachments/assets/74adf69a-088f-4688-8e5a-e73c70989173" />
+
+User Languages
+<img width="1894" height="1077" alt="user_languages" src="https://github.com/user-attachments/assets/1242071f-a79b-4d6a-bf15-c4c796ce186a" />
+
+User Questions
+<img width="1894" height="1077" alt="user_questions_page" src="https://github.com/user-attachments/assets/045967a1-1f02-4c83-9f0e-9ed3c170ef7d" />
+
+Submit Coding Question
+<img width="1900" height="1073" alt="coding_submit" src="https://github.com/user-attachments/assets/d04aa597-d391-4175-8422-02906f1d168f" />
+
+Reveal AI Hint
+<img width="1890" height="1073" alt="reveal_hint" src="https://github.com/user-attachments/assets/3ea7dfc0-58b1-494e-80e2-5181527302bd" />
+
+User Profile
+<img width="1894" height="1077" alt="user_profile" src="https://github.com/user-attachments/assets/dcf311c6-02fe-4308-8002-17167cbf371a" />
